@@ -89,16 +89,29 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface FractionalizationSettings {
+    pricePerUnit: number;
+    totalUnits: bigint;
+    unitsSold: bigint;
+}
+export type Time = bigint;
+export interface Donation {
+    id: bigint;
+    donorName: string;
+    campaignId: bigint;
+    timestamp: Time;
+    amount: number;
+}
 export interface Campaign {
     id: bigint;
     organizerBio: string;
     title: string;
     goalAmount: number;
     active: boolean;
-    startAt: string;
+    startAt: Time;
     tags: Array<string>;
     organizerName: string;
-    endAt: string;
+    endAt: Time;
     imageUrl: string;
     shortDescription: string;
     category: string;
@@ -106,12 +119,49 @@ export interface Campaign {
     contributors: bigint;
     amountRaised: number;
 }
+export interface Gift {
+    id: bigint;
+    campaignId: bigint;
+    description: string;
+    timestamp: Time;
+    itemName: string;
+    contactEmail: string;
+    estimatedValue: number;
+}
+export interface UnitClaim {
+    claimantName: string;
+    campaignId: bigint;
+    timestamp: Time;
+    unitsClaimed: bigint;
+}
+export interface Volunteer {
+    id: bigint;
+    campaignId: bigint;
+    fullName: string;
+    email: string;
+    availability: Array<string>;
+    timestamp: Time;
+    skills: string;
+}
 export interface backendInterface {
     allCampaigns(): Promise<Array<Campaign>>;
-    createCampaign(title: string, shortDescription: string, fullDescription: string, category: string, goalAmount: number, organizerName: string, organizerBio: string, imageUrl: string, startAt: string, endAt: string, tags: Array<string>): Promise<Campaign>;
+    claimUnits(campaignId: bigint, claimantName: string, units: bigint): Promise<boolean>;
+    createCampaign(title: string, shortDescription: string, fullDescription: string, category: string, goalAmount: number, organizerName: string, organizerBio: string, imageUrl: string, startAt: Time, endAt: Time, tags: Array<string>): Promise<Campaign>;
+    getActiveCampaigns(): Promise<Array<Campaign>>;
+    getAllFractionalizationSettings(): Promise<Array<[bigint, FractionalizationSettings]>>;
     getCampaign(id: bigint): Promise<Campaign | null>;
+    getCampaignsByCategory(category: string): Promise<Array<Campaign>>;
+    getDonationsByCampaign(campaignId: bigint): Promise<Array<Donation>>;
+    getFractionalizationSettings(campaignId: bigint): Promise<FractionalizationSettings | null>;
+    getGiftsByCampaign(campaignId: bigint): Promise<Array<Gift>>;
+    getUnitClaims(campaignId: bigint): Promise<Array<UnitClaim>>;
+    getVolunteersByCampaign(campaignId: bigint): Promise<Array<Volunteer>>;
+    recordDonation(campaignId: bigint, amount: number, donorName: string): Promise<Campaign | null>;
+    recordGift(campaignId: bigint, itemName: string, estimatedValue: number, description: string, contactEmail: string): Promise<boolean>;
+    registerVolunteer(campaignId: bigint, fullName: string, email: string, availability: Array<string>, skills: string): Promise<boolean>;
+    setFractionalizationSettings(campaignId: bigint, totalUnits: bigint, pricePerUnit: number): Promise<boolean>;
 }
-import type { Campaign as _Campaign } from "./declarations/backend.did.d.ts";
+import type { Campaign as _Campaign, FractionalizationSettings as _FractionalizationSettings } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async allCampaigns(): Promise<Array<Campaign>> {
@@ -128,7 +178,21 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createCampaign(arg0: string, arg1: string, arg2: string, arg3: string, arg4: number, arg5: string, arg6: string, arg7: string, arg8: string, arg9: string, arg10: Array<string>): Promise<Campaign> {
+    async claimUnits(arg0: bigint, arg1: string, arg2: bigint): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.claimUnits(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.claimUnits(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async createCampaign(arg0: string, arg1: string, arg2: string, arg3: string, arg4: number, arg5: string, arg6: string, arg7: string, arg8: Time, arg9: Time, arg10: Array<string>): Promise<Campaign> {
         if (this.processError) {
             try {
                 const result = await this.actor.createCampaign(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
@@ -139,6 +203,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createCampaign(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+            return result;
+        }
+    }
+    async getActiveCampaigns(): Promise<Array<Campaign>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getActiveCampaigns();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getActiveCampaigns();
+            return result;
+        }
+    }
+    async getAllFractionalizationSettings(): Promise<Array<[bigint, FractionalizationSettings]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllFractionalizationSettings();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllFractionalizationSettings();
             return result;
         }
     }
@@ -156,8 +248,151 @@ export class Backend implements backendInterface {
             return from_candid_opt_n1(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getCampaignsByCategory(arg0: string): Promise<Array<Campaign>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCampaignsByCategory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCampaignsByCategory(arg0);
+            return result;
+        }
+    }
+    async getDonationsByCampaign(arg0: bigint): Promise<Array<Donation>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getDonationsByCampaign(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getDonationsByCampaign(arg0);
+            return result;
+        }
+    }
+    async getFractionalizationSettings(arg0: bigint): Promise<FractionalizationSettings | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFractionalizationSettings(arg0);
+                return from_candid_opt_n2(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFractionalizationSettings(arg0);
+            return from_candid_opt_n2(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getGiftsByCampaign(arg0: bigint): Promise<Array<Gift>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getGiftsByCampaign(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getGiftsByCampaign(arg0);
+            return result;
+        }
+    }
+    async getUnitClaims(arg0: bigint): Promise<Array<UnitClaim>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUnitClaims(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUnitClaims(arg0);
+            return result;
+        }
+    }
+    async getVolunteersByCampaign(arg0: bigint): Promise<Array<Volunteer>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVolunteersByCampaign(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVolunteersByCampaign(arg0);
+            return result;
+        }
+    }
+    async recordDonation(arg0: bigint, arg1: number, arg2: string): Promise<Campaign | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.recordDonation(arg0, arg1, arg2);
+                return from_candid_opt_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.recordDonation(arg0, arg1, arg2);
+            return from_candid_opt_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async recordGift(arg0: bigint, arg1: string, arg2: number, arg3: string, arg4: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.recordGift(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.recordGift(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async registerVolunteer(arg0: bigint, arg1: string, arg2: string, arg3: Array<string>, arg4: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.registerVolunteer(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.registerVolunteer(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async setFractionalizationSettings(arg0: bigint, arg1: bigint, arg2: number): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setFractionalizationSettings(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setFractionalizationSettings(arg0, arg1, arg2);
+            return result;
+        }
+    }
 }
 function from_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Campaign]): Campaign | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_FractionalizationSettings]): FractionalizationSettings | null {
     return value.length === 0 ? null : value[0];
 }
 export interface CreateActorOptions {

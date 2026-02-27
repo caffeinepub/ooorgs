@@ -16,10 +16,10 @@ export interface Campaign {
   'title' : string,
   'goalAmount' : number,
   'active' : boolean,
-  'startAt' : string,
+  'startAt' : Time,
   'tags' : Array<string>,
   'organizerName' : string,
-  'endAt' : string,
+  'endAt' : Time,
   'imageUrl' : string,
   'shortDescription' : string,
   'category' : string,
@@ -27,8 +27,46 @@ export interface Campaign {
   'contributors' : bigint,
   'amountRaised' : number,
 }
+export interface Donation {
+  'id' : bigint,
+  'donorName' : string,
+  'campaignId' : bigint,
+  'timestamp' : Time,
+  'amount' : number,
+}
+export interface FractionalizationSettings {
+  'pricePerUnit' : number,
+  'totalUnits' : bigint,
+  'unitsSold' : bigint,
+}
+export interface Gift {
+  'id' : bigint,
+  'campaignId' : bigint,
+  'description' : string,
+  'timestamp' : Time,
+  'itemName' : string,
+  'contactEmail' : string,
+  'estimatedValue' : number,
+}
+export type Time = bigint;
+export interface UnitClaim {
+  'claimantName' : string,
+  'campaignId' : bigint,
+  'timestamp' : Time,
+  'unitsClaimed' : bigint,
+}
+export interface Volunteer {
+  'id' : bigint,
+  'campaignId' : bigint,
+  'fullName' : string,
+  'email' : string,
+  'availability' : Array<string>,
+  'timestamp' : Time,
+  'skills' : string,
+}
 export interface _SERVICE {
   'allCampaigns' : ActorMethod<[], Array<Campaign>>,
+  'claimUnits' : ActorMethod<[bigint, string, bigint], boolean>,
   'createCampaign' : ActorMethod<
     [
       string,
@@ -39,13 +77,37 @@ export interface _SERVICE {
       string,
       string,
       string,
-      string,
-      string,
+      Time,
+      Time,
       Array<string>,
     ],
     Campaign
   >,
+  'getActiveCampaigns' : ActorMethod<[], Array<Campaign>>,
+  'getAllFractionalizationSettings' : ActorMethod<
+    [],
+    Array<[bigint, FractionalizationSettings]>
+  >,
   'getCampaign' : ActorMethod<[bigint], [] | [Campaign]>,
+  'getCampaignsByCategory' : ActorMethod<[string], Array<Campaign>>,
+  'getDonationsByCampaign' : ActorMethod<[bigint], Array<Donation>>,
+  'getFractionalizationSettings' : ActorMethod<
+    [bigint],
+    [] | [FractionalizationSettings]
+  >,
+  'getGiftsByCampaign' : ActorMethod<[bigint], Array<Gift>>,
+  'getUnitClaims' : ActorMethod<[bigint], Array<UnitClaim>>,
+  'getVolunteersByCampaign' : ActorMethod<[bigint], Array<Volunteer>>,
+  'recordDonation' : ActorMethod<[bigint, number, string], [] | [Campaign]>,
+  'recordGift' : ActorMethod<[bigint, string, number, string, string], boolean>,
+  'registerVolunteer' : ActorMethod<
+    [bigint, string, string, Array<string>, string],
+    boolean
+  >,
+  'setFractionalizationSettings' : ActorMethod<
+    [bigint, bigint, number],
+    boolean
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

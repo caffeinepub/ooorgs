@@ -8,16 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const Time = IDL.Int;
 export const Campaign = IDL.Record({
   'id' : IDL.Nat,
   'organizerBio' : IDL.Text,
   'title' : IDL.Text,
   'goalAmount' : IDL.Float64,
   'active' : IDL.Bool,
-  'startAt' : IDL.Text,
+  'startAt' : Time,
   'tags' : IDL.Vec(IDL.Text),
   'organizerName' : IDL.Text,
-  'endAt' : IDL.Text,
+  'endAt' : Time,
   'imageUrl' : IDL.Text,
   'shortDescription' : IDL.Text,
   'category' : IDL.Text,
@@ -25,9 +26,46 @@ export const Campaign = IDL.Record({
   'contributors' : IDL.Nat,
   'amountRaised' : IDL.Float64,
 });
+export const FractionalizationSettings = IDL.Record({
+  'pricePerUnit' : IDL.Float64,
+  'totalUnits' : IDL.Nat,
+  'unitsSold' : IDL.Nat,
+});
+export const Donation = IDL.Record({
+  'id' : IDL.Nat,
+  'donorName' : IDL.Text,
+  'campaignId' : IDL.Nat,
+  'timestamp' : Time,
+  'amount' : IDL.Float64,
+});
+export const Gift = IDL.Record({
+  'id' : IDL.Nat,
+  'campaignId' : IDL.Nat,
+  'description' : IDL.Text,
+  'timestamp' : Time,
+  'itemName' : IDL.Text,
+  'contactEmail' : IDL.Text,
+  'estimatedValue' : IDL.Float64,
+});
+export const UnitClaim = IDL.Record({
+  'claimantName' : IDL.Text,
+  'campaignId' : IDL.Nat,
+  'timestamp' : Time,
+  'unitsClaimed' : IDL.Nat,
+});
+export const Volunteer = IDL.Record({
+  'id' : IDL.Nat,
+  'campaignId' : IDL.Nat,
+  'fullName' : IDL.Text,
+  'email' : IDL.Text,
+  'availability' : IDL.Vec(IDL.Text),
+  'timestamp' : Time,
+  'skills' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   'allCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+  'claimUnits' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Bool], []),
   'createCampaign' : IDL.Func(
       [
         IDL.Text,
@@ -38,29 +76,78 @@ export const idlService = IDL.Service({
         IDL.Text,
         IDL.Text,
         IDL.Text,
-        IDL.Text,
-        IDL.Text,
+        Time,
+        Time,
         IDL.Vec(IDL.Text),
       ],
       [Campaign],
       [],
     ),
+  'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+  'getAllFractionalizationSettings' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Nat, FractionalizationSettings))],
+      ['query'],
+    ),
   'getCampaign' : IDL.Func([IDL.Nat], [IDL.Opt(Campaign)], ['query']),
+  'getCampaignsByCategory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(Campaign)],
+      ['query'],
+    ),
+  'getDonationsByCampaign' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Vec(Donation)],
+      ['query'],
+    ),
+  'getFractionalizationSettings' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(FractionalizationSettings)],
+      ['query'],
+    ),
+  'getGiftsByCampaign' : IDL.Func([IDL.Nat], [IDL.Vec(Gift)], ['query']),
+  'getUnitClaims' : IDL.Func([IDL.Nat], [IDL.Vec(UnitClaim)], ['query']),
+  'getVolunteersByCampaign' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Vec(Volunteer)],
+      ['query'],
+    ),
+  'recordDonation' : IDL.Func(
+      [IDL.Nat, IDL.Float64, IDL.Text],
+      [IDL.Opt(Campaign)],
+      [],
+    ),
+  'recordGift' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Float64, IDL.Text, IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
+  'registerVolunteer' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Text],
+      [IDL.Bool],
+      [],
+    ),
+  'setFractionalizationSettings' : IDL.Func(
+      [IDL.Nat, IDL.Nat, IDL.Float64],
+      [IDL.Bool],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const Time = IDL.Int;
   const Campaign = IDL.Record({
     'id' : IDL.Nat,
     'organizerBio' : IDL.Text,
     'title' : IDL.Text,
     'goalAmount' : IDL.Float64,
     'active' : IDL.Bool,
-    'startAt' : IDL.Text,
+    'startAt' : Time,
     'tags' : IDL.Vec(IDL.Text),
     'organizerName' : IDL.Text,
-    'endAt' : IDL.Text,
+    'endAt' : Time,
     'imageUrl' : IDL.Text,
     'shortDescription' : IDL.Text,
     'category' : IDL.Text,
@@ -68,9 +155,46 @@ export const idlFactory = ({ IDL }) => {
     'contributors' : IDL.Nat,
     'amountRaised' : IDL.Float64,
   });
+  const FractionalizationSettings = IDL.Record({
+    'pricePerUnit' : IDL.Float64,
+    'totalUnits' : IDL.Nat,
+    'unitsSold' : IDL.Nat,
+  });
+  const Donation = IDL.Record({
+    'id' : IDL.Nat,
+    'donorName' : IDL.Text,
+    'campaignId' : IDL.Nat,
+    'timestamp' : Time,
+    'amount' : IDL.Float64,
+  });
+  const Gift = IDL.Record({
+    'id' : IDL.Nat,
+    'campaignId' : IDL.Nat,
+    'description' : IDL.Text,
+    'timestamp' : Time,
+    'itemName' : IDL.Text,
+    'contactEmail' : IDL.Text,
+    'estimatedValue' : IDL.Float64,
+  });
+  const UnitClaim = IDL.Record({
+    'claimantName' : IDL.Text,
+    'campaignId' : IDL.Nat,
+    'timestamp' : Time,
+    'unitsClaimed' : IDL.Nat,
+  });
+  const Volunteer = IDL.Record({
+    'id' : IDL.Nat,
+    'campaignId' : IDL.Nat,
+    'fullName' : IDL.Text,
+    'email' : IDL.Text,
+    'availability' : IDL.Vec(IDL.Text),
+    'timestamp' : Time,
+    'skills' : IDL.Text,
+  });
   
   return IDL.Service({
     'allCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+    'claimUnits' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Bool], []),
     'createCampaign' : IDL.Func(
         [
           IDL.Text,
@@ -81,14 +205,62 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
           IDL.Text,
-          IDL.Text,
-          IDL.Text,
+          Time,
+          Time,
           IDL.Vec(IDL.Text),
         ],
         [Campaign],
         [],
       ),
+    'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+    'getAllFractionalizationSettings' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat, FractionalizationSettings))],
+        ['query'],
+      ),
     'getCampaign' : IDL.Func([IDL.Nat], [IDL.Opt(Campaign)], ['query']),
+    'getCampaignsByCategory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(Campaign)],
+        ['query'],
+      ),
+    'getDonationsByCampaign' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Vec(Donation)],
+        ['query'],
+      ),
+    'getFractionalizationSettings' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(FractionalizationSettings)],
+        ['query'],
+      ),
+    'getGiftsByCampaign' : IDL.Func([IDL.Nat], [IDL.Vec(Gift)], ['query']),
+    'getUnitClaims' : IDL.Func([IDL.Nat], [IDL.Vec(UnitClaim)], ['query']),
+    'getVolunteersByCampaign' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Vec(Volunteer)],
+        ['query'],
+      ),
+    'recordDonation' : IDL.Func(
+        [IDL.Nat, IDL.Float64, IDL.Text],
+        [IDL.Opt(Campaign)],
+        [],
+      ),
+    'recordGift' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Float64, IDL.Text, IDL.Text],
+        [IDL.Bool],
+        [],
+      ),
+    'registerVolunteer' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Text],
+        [IDL.Bool],
+        [],
+      ),
+    'setFractionalizationSettings' : IDL.Func(
+        [IDL.Nat, IDL.Nat, IDL.Float64],
+        [IDL.Bool],
+        [],
+      ),
   });
 };
 

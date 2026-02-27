@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   createRouter,
   createRootRoute,
@@ -6,12 +7,50 @@ import {
   Outlet,
   Navigate,
 } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import CharitablePage from "./pages/CharitablePage";
+import CampaignDetailPage from "./pages/CampaignDetailPage";
 import CorporationsPage from "./pages/CorporationsPage";
 import CooperativesPage from "./pages/CooperativesPage";
 import DaoPage from "./pages/DaoPage";
+import { useActor } from "./hooks/useActor";
+
+// ─── FinFranFran seed settings ────────────────────────────────────────────────
+// Seeds fractionalization settings for the first 3 campaigns if they don't exist.
+const FFF_SEEDS: Array<{ campaignId: bigint; totalUnits: bigint; pricePerUnit: number }> = [
+  { campaignId: 1n, totalUnits: 1000n, pricePerUnit: 25 },
+  { campaignId: 2n, totalUnits: 500n,  pricePerUnit: 100 },
+  { campaignId: 3n, totalUnits: 2000n, pricePerUnit: 10 },
+];
+
+function FFFSeeder() {
+  const { actor, isFetching } = useActor();
+
+  useEffect(() => {
+    if (!actor || isFetching) return;
+
+    // Run seed checks in parallel; only set if not already configured
+    Promise.all(
+      FFF_SEEDS.map(async (seed) => {
+        try {
+          const existing = await actor.getFractionalizationSettings(seed.campaignId);
+          if (existing === null) {
+            await actor.setFractionalizationSettings(seed.campaignId, seed.totalUnits, seed.pricePerUnit);
+          }
+        } catch (err) {
+          // Non-fatal: campaign may not exist yet
+          console.warn(`FinFranFran seed skipped for campaign ${seed.campaignId}:`, err);
+        }
+      })
+    ).catch((err) => {
+      console.warn("FinFranFran seed error:", err);
+    });
+  }, [actor, isFetching]);
+
+  return null;
+}
 
 // ─── Root layout (NavBar + footer wrapping all routes) ────────────────────────
 const rootRoute = createRootRoute({
@@ -28,6 +67,8 @@ function RootLayout() {
         background: "oklch(0.97 0.02 88)",
       }}
     >
+      <FFFSeeder />
+      <Toaster richColors position="top-right" />
       <NavBar />
       <div style={{ flex: 1 }}>
         <Outlet />
@@ -76,6 +117,12 @@ const charitableRoute = createRoute({
   component: CharitablePage,
 });
 
+const campaignDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/charitable/$campaignId",
+  component: CampaignDetailPage,
+});
+
 const corporationsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/corporations",
@@ -104,6 +151,7 @@ const catchAllRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   charitableRoute,
+  campaignDetailRoute,
   corporationsRoute,
   cooperativesRoute,
   daoRoute,

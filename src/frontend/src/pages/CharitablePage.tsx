@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useActor } from "../hooks/useActor";
 import type { Campaign } from "../backend.d.ts";
 
@@ -61,11 +62,16 @@ function getCategoryColors(category: string): CategoryColors {
 }
 
 // ─── Seed data ────────────────────────────────────────────────────────────────
+// startAt and endAt are nanosecond bigint timestamps for the backend
 type CreateCampaignArgs = [
   string, string, string, string, number,
-  string, string, string, string, string,
+  string, string, string, bigint, bigint,
   string[]
 ];
+
+function dateToNs(dateStr: string): bigint {
+  return BigInt(new Date(dateStr).getTime()) * 1_000_000n;
+}
 
 const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
   [
@@ -77,8 +83,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "AquaLife Foundation",
     "AquaLife Foundation has delivered clean water solutions to over 200 communities across Sub-Saharan Africa since 2008.",
     "",
-    "2026-01-01",
-    "2026-12-31",
+    dateToNs("2026-01-01"),
+    dateToNs("2026-12-31"),
     ["water", "africa", "infrastructure", "health"],
   ],
   [
@@ -90,8 +96,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "ReadForward Alliance",
     "ReadForward Alliance partners with governments and NGOs to improve literacy outcomes for over 100,000 children annually.",
     "",
-    "2026-02-01",
-    "2026-08-31",
+    dateToNs("2026-02-01"),
+    dateToNs("2026-08-31"),
     ["education", "literacy", "children", "books"],
   ],
   [
@@ -103,8 +109,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "MediReach Global",
     "MediReach Global coordinates volunteer medical professionals to deliver care in 22 countries.",
     "",
-    "2026-03-01",
-    "2026-11-30",
+    dateToNs("2026-03-01"),
+    dateToNs("2026-11-30"),
     ["health", "medical", "mobile", "volunteers"],
   ],
   [
@@ -116,8 +122,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "GreenRoots Collective",
     "GreenRoots Collective is a grassroots urban agriculture network active in 14 cities with over 3,000 active gardener members.",
     "",
-    "2026-01-15",
-    "2026-06-30",
+    dateToNs("2026-01-15"),
+    dateToNs("2026-06-30"),
     ["urban", "food", "gardens", "sustainability"],
   ],
   [
@@ -129,8 +135,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "Heritage Alive Trust",
     "Heritage Alive Trust has preserved over 180 traditional art forms across 30 countries through documentation and public exhibition.",
     "",
-    "2026-04-01",
-    "2027-03-31",
+    dateToNs("2026-04-01"),
+    dateToNs("2027-03-31"),
     ["arts", "culture", "heritage", "preservation"],
   ],
   [
@@ -142,8 +148,8 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
     "RapidAid Network",
     "RapidAid Network has responded to 47 disasters in 31 countries, delivering aid to over 500,000 affected people since 2012.",
     "",
-    "2026-01-01",
-    "2026-12-31",
+    dateToNs("2026-01-01"),
+    dateToNs("2026-12-31"),
     ["emergency", "relief", "disaster", "shelter"],
   ],
 ];
@@ -189,6 +195,7 @@ function CampaignSkeleton() {
 // ─── Campaign card ────────────────────────────────────────────────────────────
 function CampaignCard({ campaign }: { campaign: Campaign }) {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
   const colors = getCategoryColors(campaign.category);
   const pct = campaign.goalAmount > 0
     ? Math.min(100, (campaign.amountRaised / campaign.goalAmount) * 100)
@@ -197,18 +204,25 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
   const formatGBP = (n: number) =>
     new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
 
-  const formatDate = (s: string) => {
+  const formatDate = (ts: bigint) => {
     try {
-      return new Date(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      return new Date(Number(ts / 1_000_000n)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
     } catch {
-      return s;
+      return "";
     }
   };
 
   return (
-    <article
+    <button
+      type="button"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() =>
+        navigate({
+          to: "/charitable/$campaignId",
+          params: { campaignId: String(campaign.id) },
+        })
+      }
       style={{
         background: T.white,
         borderRadius: "16px",
@@ -221,8 +235,12 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
         display: "flex",
         flexDirection: "column",
-        cursor: "default",
+        cursor: "pointer",
         height: "100%",
+        width: "100%",
+        textAlign: "left",
+        padding: 0,
+        fontFamily: "inherit",
       }}
     >
       {/* Category accent bar */}
@@ -406,7 +424,7 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
           </div>
         )}
       </div>
-    </article>
+    </button>
   );
 }
 
