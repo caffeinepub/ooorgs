@@ -4,6 +4,7 @@ import Nat "mo:core/Nat";
 import Array "mo:core/Array";
 import Iter "mo:core/Iter";
 import Text "mo:core/Text";
+import Char "mo:core/Char";
 import Time "mo:core/Time";
 import Migration "migration";
 
@@ -68,17 +69,44 @@ actor {
     timestamp : Time.Time;
   };
 
+  public type IncomeEntry = {
+    id : Nat;
+    date : Text;
+    ref : Text;
+    description : Text;
+    category : Text;
+    source : Text;
+    amount : Float;
+    createdAt : Time.Time;
+  };
+
+  public type ExpenseEntry = {
+    id : Nat;
+    date : Text;
+    ref : Text;
+    description : Text;
+    category : Text;
+    vendor : Text;
+    amount : Float;
+    createdAt : Time.Time;
+  };
+
   let campaigns = Map.empty<Nat, Campaign>();
   let donations = Map.empty<Nat, Donation>();
   let gifts = Map.empty<Nat, Gift>();
   let volunteers = Map.empty<Nat, Volunteer>();
   let fractionalizationSettings = Map.empty<Nat, FractionalizationSettings>();
   let unitClaims = Map.empty<Nat, [UnitClaim]>();
+  let incomeEntries = Map.empty<Nat, IncomeEntry>();
+  let expenseEntries = Map.empty<Nat, ExpenseEntry>();
+  let budgetTargets = Map.empty<Text, Float>();
 
   var nextCampaignId = 1;
   var nextDonationId = 1;
   var nextGiftId = 1;
   var nextVolunteerId = 1;
+  var nextIncomeEntryId = 13;
+  var nextExpenseEntryId = 13;
 
   public shared ({ caller }) func createCampaign(
     title : Text,
@@ -331,5 +359,134 @@ actor {
 
   public query ({ caller }) func getAllFractionalizationSettings() : async [(Nat, FractionalizationSettings)] {
     fractionalizationSettings.toArray();
+  };
+
+  ///////////////////////////////
+  // Income Entry Functions    //
+  ///////////////////////////////
+
+  public shared ({ caller }) func addIncomeEntry(
+    date : Text,
+    ref : Text,
+    description : Text,
+    category : Text,
+    source : Text,
+    amount : Float,
+  ) : async IncomeEntry {
+    let entry : IncomeEntry = {
+      id = nextIncomeEntryId;
+      date;
+      ref;
+      description;
+      category;
+      source;
+      amount;
+      createdAt = Time.now();
+    };
+
+    incomeEntries.add(nextIncomeEntryId, entry);
+    nextIncomeEntryId += 1;
+    entry;
+  };
+
+  public query ({ caller }) func getAllIncomeEntries() : async [IncomeEntry] {
+    incomeEntries.values().toArray().sort(
+      func(a, b) { Nat.compare(b.id, a.id) }
+    );
+  };
+
+  public query ({ caller }) func getIncomeEntriesByCategory(category : Text) : async [IncomeEntry] {
+    incomeEntries.values().toArray().filter(
+      func(entry) {
+        let entryCategoryLower = Text.fromIter(entry.category.chars().map(
+          func(c) {
+            if (c >= 'A' and c <= 'Z') {
+              Char.fromNat32(c.toNat32() + 32);
+            } else { c };
+          }
+        ));
+
+        let filterCategoryLower = Text.fromIter(category.chars().map(
+          func(c) {
+            if (c >= 'A' and c <= 'Z') {
+              Char.fromNat32(c.toNat32() + 32);
+            } else { c };
+          }
+        ));
+
+        entryCategoryLower == filterCategoryLower;
+      }
+    );
+  };
+
+  ////////////////////////////////
+  // Expense Entry Functions    //
+  ////////////////////////////////
+
+  public shared ({ caller }) func addExpenseEntry(
+    date : Text,
+    ref : Text,
+    description : Text,
+    category : Text,
+    vendor : Text,
+    amount : Float,
+  ) : async ExpenseEntry {
+    let entry : ExpenseEntry = {
+      id = nextExpenseEntryId;
+      date;
+      ref;
+      description;
+      category;
+      vendor;
+      amount;
+      createdAt = Time.now();
+    };
+
+    expenseEntries.add(nextExpenseEntryId, entry);
+    nextExpenseEntryId += 1;
+    entry;
+  };
+
+  public query ({ caller }) func getAllExpenseEntries() : async [ExpenseEntry] {
+    expenseEntries.values().toArray().sort(
+      func(a, b) { Nat.compare(b.id, a.id) }
+    );
+  };
+
+  public query ({ caller }) func getExpenseEntriesByCategory(category : Text) : async [ExpenseEntry] {
+    expenseEntries.values().toArray().filter(
+      func(entry) {
+        let entryCategoryLower = Text.fromIter(entry.category.chars().map(
+          func(c) {
+            if (c >= 'A' and c <= 'Z') {
+              Char.fromNat32(c.toNat32() + 32);
+            } else { c };
+          }
+        ));
+
+        let filterCategoryLower = Text.fromIter(category.chars().map(
+          func(c) {
+            if (c >= 'A' and c <= 'Z') {
+              Char.fromNat32(c.toNat32() + 32);
+            } else { c };
+          }
+        ));
+
+        entryCategoryLower == filterCategoryLower;
+      }
+    );
+  };
+
+  ////////////////////////////////////
+  // New Functions for Budget Targets
+  ////////////////////////////////////
+
+  public shared ({ caller }) func setBudgetTarget(category : Text, amount : Float) : async Bool {
+    budgetTargets.add(category, amount);
+    true;
+  };
+
+  public query ({ caller }) func getBudgetTargets() : async [(Text, Float)] {
+    budgetTargets.toArray();
   };
 };

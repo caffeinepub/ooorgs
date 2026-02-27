@@ -3,6 +3,85 @@ import { useNavigate } from "@tanstack/react-router";
 import { useActor } from "../hooks/useActor";
 import type { Campaign } from "../backend.d.ts";
 
+// ─── Volunteer CTA Banner ─────────────────────────────────────────────────────
+function VolunteerCTABanner() {
+  const navigate = useNavigate();
+  return (
+    <div
+      style={{
+        marginTop: "56px",
+        background: "oklch(0.92 0.04 155)",
+        border: "1px solid oklch(0.84 0.08 155)",
+        borderRadius: "16px",
+        padding: "32px 40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "24px",
+        flexWrap: "wrap",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <span
+          style={{
+            fontSize: "2.4rem",
+            lineHeight: 1,
+            flexShrink: 0,
+          }}
+        >
+          🌿
+        </span>
+        <div>
+          <h3
+            style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: "1.3rem",
+              fontWeight: 700,
+              color: "oklch(0.28 0.10 155)",
+              marginBottom: "6px",
+            }}
+          >
+            Want to give your time?
+          </h3>
+          <p
+            style={{
+              fontFamily: "'Inter', system-ui, sans-serif",
+              fontSize: "0.9rem",
+              color: "oklch(0.38 0.08 155)",
+              lineHeight: 1.6,
+              maxWidth: "440px",
+            }}
+          >
+            Not every contribution is financial. Browse our Volunteer Hub and find a cause that matches your skills, passion, and availability.
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/volunteers" })}
+        style={{
+          padding: "11px 28px",
+          borderRadius: "10px",
+          border: "none",
+          background: "oklch(0.38 0.12 155)",
+          color: "oklch(1 0 0)",
+          fontFamily: "'Inter', system-ui, sans-serif",
+          fontSize: "0.9rem",
+          fontWeight: 700,
+          cursor: "pointer",
+          transition: "background 0.15s",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(0.28 0.10 155)"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(0.38 0.12 155)"; }}
+      >
+        Browse Volunteer Hub →
+      </button>
+    </div>
+  );
+}
+
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const T = {
   green: "oklch(0.38 0.12 155)",
@@ -875,6 +954,9 @@ export function CharitablePage() {
               </div>
             )}
           </div>
+
+          {/* ── Volunteer CTA ──────────────────────────────────── */}
+          {!isLoading && !error && <VolunteerCTABanner />}
         </div>
       </main>
     </>

@@ -34,6 +34,16 @@ export interface Donation {
   'timestamp' : Time,
   'amount' : number,
 }
+export interface ExpenseEntry {
+  'id' : bigint,
+  'ref' : string,
+  'date' : string,
+  'createdAt' : Time,
+  'description' : string,
+  'vendor' : string,
+  'category' : string,
+  'amount' : number,
+}
 export interface FractionalizationSettings {
   'pricePerUnit' : number,
   'totalUnits' : bigint,
@@ -47,6 +57,16 @@ export interface Gift {
   'itemName' : string,
   'contactEmail' : string,
   'estimatedValue' : number,
+}
+export interface IncomeEntry {
+  'id' : bigint,
+  'ref' : string,
+  'source' : string,
+  'date' : string,
+  'createdAt' : Time,
+  'description' : string,
+  'category' : string,
+  'amount' : number,
 }
 export type Time = bigint;
 export interface UnitClaim {
@@ -65,6 +85,14 @@ export interface Volunteer {
   'skills' : string,
 }
 export interface _SERVICE {
+  'addExpenseEntry' : ActorMethod<
+    [string, string, string, string, string, number],
+    ExpenseEntry
+  >,
+  'addIncomeEntry' : ActorMethod<
+    [string, string, string, string, string, number],
+    IncomeEntry
+  >,
   'allCampaigns' : ActorMethod<[], Array<Campaign>>,
   'claimUnits' : ActorMethod<[bigint, string, bigint], boolean>,
   'createCampaign' : ActorMethod<
@@ -84,18 +112,23 @@ export interface _SERVICE {
     Campaign
   >,
   'getActiveCampaigns' : ActorMethod<[], Array<Campaign>>,
+  'getAllExpenseEntries' : ActorMethod<[], Array<ExpenseEntry>>,
   'getAllFractionalizationSettings' : ActorMethod<
     [],
     Array<[bigint, FractionalizationSettings]>
   >,
+  'getAllIncomeEntries' : ActorMethod<[], Array<IncomeEntry>>,
+  'getBudgetTargets' : ActorMethod<[], Array<[string, number]>>,
   'getCampaign' : ActorMethod<[bigint], [] | [Campaign]>,
   'getCampaignsByCategory' : ActorMethod<[string], Array<Campaign>>,
   'getDonationsByCampaign' : ActorMethod<[bigint], Array<Donation>>,
+  'getExpenseEntriesByCategory' : ActorMethod<[string], Array<ExpenseEntry>>,
   'getFractionalizationSettings' : ActorMethod<
     [bigint],
     [] | [FractionalizationSettings]
   >,
   'getGiftsByCampaign' : ActorMethod<[bigint], Array<Gift>>,
+  'getIncomeEntriesByCategory' : ActorMethod<[string], Array<IncomeEntry>>,
   'getUnitClaims' : ActorMethod<[bigint], Array<UnitClaim>>,
   'getVolunteersByCampaign' : ActorMethod<[bigint], Array<Volunteer>>,
   'recordDonation' : ActorMethod<[bigint, number, string], [] | [Campaign]>,
@@ -104,6 +137,7 @@ export interface _SERVICE {
     [bigint, string, string, Array<string>, string],
     boolean
   >,
+  'setBudgetTarget' : ActorMethod<[string, number], boolean>,
   'setFractionalizationSettings' : ActorMethod<
     [bigint, bigint, number],
     boolean

@@ -9,6 +9,26 @@
 import { IDL } from '@icp-sdk/core/candid';
 
 export const Time = IDL.Int;
+export const ExpenseEntry = IDL.Record({
+  'id' : IDL.Nat,
+  'ref' : IDL.Text,
+  'date' : IDL.Text,
+  'createdAt' : Time,
+  'description' : IDL.Text,
+  'vendor' : IDL.Text,
+  'category' : IDL.Text,
+  'amount' : IDL.Float64,
+});
+export const IncomeEntry = IDL.Record({
+  'id' : IDL.Nat,
+  'ref' : IDL.Text,
+  'source' : IDL.Text,
+  'date' : IDL.Text,
+  'createdAt' : Time,
+  'description' : IDL.Text,
+  'category' : IDL.Text,
+  'amount' : IDL.Float64,
+});
 export const Campaign = IDL.Record({
   'id' : IDL.Nat,
   'organizerBio' : IDL.Text,
@@ -64,6 +84,16 @@ export const Volunteer = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'addExpenseEntry' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Float64],
+      [ExpenseEntry],
+      [],
+    ),
+  'addIncomeEntry' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Float64],
+      [IncomeEntry],
+      [],
+    ),
   'allCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
   'claimUnits' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Bool], []),
   'createCampaign' : IDL.Func(
@@ -84,9 +114,16 @@ export const idlService = IDL.Service({
       [],
     ),
   'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+  'getAllExpenseEntries' : IDL.Func([], [IDL.Vec(ExpenseEntry)], ['query']),
   'getAllFractionalizationSettings' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Nat, FractionalizationSettings))],
+      ['query'],
+    ),
+  'getAllIncomeEntries' : IDL.Func([], [IDL.Vec(IncomeEntry)], ['query']),
+  'getBudgetTargets' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
       ['query'],
     ),
   'getCampaign' : IDL.Func([IDL.Nat], [IDL.Opt(Campaign)], ['query']),
@@ -100,12 +137,22 @@ export const idlService = IDL.Service({
       [IDL.Vec(Donation)],
       ['query'],
     ),
+  'getExpenseEntriesByCategory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(ExpenseEntry)],
+      ['query'],
+    ),
   'getFractionalizationSettings' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(FractionalizationSettings)],
       ['query'],
     ),
   'getGiftsByCampaign' : IDL.Func([IDL.Nat], [IDL.Vec(Gift)], ['query']),
+  'getIncomeEntriesByCategory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(IncomeEntry)],
+      ['query'],
+    ),
   'getUnitClaims' : IDL.Func([IDL.Nat], [IDL.Vec(UnitClaim)], ['query']),
   'getVolunteersByCampaign' : IDL.Func(
       [IDL.Nat],
@@ -127,6 +174,7 @@ export const idlService = IDL.Service({
       [IDL.Bool],
       [],
     ),
+  'setBudgetTarget' : IDL.Func([IDL.Text, IDL.Float64], [IDL.Bool], []),
   'setFractionalizationSettings' : IDL.Func(
       [IDL.Nat, IDL.Nat, IDL.Float64],
       [IDL.Bool],
@@ -138,6 +186,26 @@ export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
+  const ExpenseEntry = IDL.Record({
+    'id' : IDL.Nat,
+    'ref' : IDL.Text,
+    'date' : IDL.Text,
+    'createdAt' : Time,
+    'description' : IDL.Text,
+    'vendor' : IDL.Text,
+    'category' : IDL.Text,
+    'amount' : IDL.Float64,
+  });
+  const IncomeEntry = IDL.Record({
+    'id' : IDL.Nat,
+    'ref' : IDL.Text,
+    'source' : IDL.Text,
+    'date' : IDL.Text,
+    'createdAt' : Time,
+    'description' : IDL.Text,
+    'category' : IDL.Text,
+    'amount' : IDL.Float64,
+  });
   const Campaign = IDL.Record({
     'id' : IDL.Nat,
     'organizerBio' : IDL.Text,
@@ -193,6 +261,16 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'addExpenseEntry' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Float64],
+        [ExpenseEntry],
+        [],
+      ),
+    'addIncomeEntry' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Float64],
+        [IncomeEntry],
+        [],
+      ),
     'allCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
     'claimUnits' : IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Bool], []),
     'createCampaign' : IDL.Func(
@@ -213,9 +291,16 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
+    'getAllExpenseEntries' : IDL.Func([], [IDL.Vec(ExpenseEntry)], ['query']),
     'getAllFractionalizationSettings' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Nat, FractionalizationSettings))],
+        ['query'],
+      ),
+    'getAllIncomeEntries' : IDL.Func([], [IDL.Vec(IncomeEntry)], ['query']),
+    'getBudgetTargets' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
         ['query'],
       ),
     'getCampaign' : IDL.Func([IDL.Nat], [IDL.Opt(Campaign)], ['query']),
@@ -229,12 +314,22 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Donation)],
         ['query'],
       ),
+    'getExpenseEntriesByCategory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(ExpenseEntry)],
+        ['query'],
+      ),
     'getFractionalizationSettings' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(FractionalizationSettings)],
         ['query'],
       ),
     'getGiftsByCampaign' : IDL.Func([IDL.Nat], [IDL.Vec(Gift)], ['query']),
+    'getIncomeEntriesByCategory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(IncomeEntry)],
+        ['query'],
+      ),
     'getUnitClaims' : IDL.Func([IDL.Nat], [IDL.Vec(UnitClaim)], ['query']),
     'getVolunteersByCampaign' : IDL.Func(
         [IDL.Nat],
@@ -256,6 +351,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         [],
       ),
+    'setBudgetTarget' : IDL.Func([IDL.Text, IDL.Float64], [IDL.Bool], []),
     'setFractionalizationSettings' : IDL.Func(
         [IDL.Nat, IDL.Nat, IDL.Float64],
         [IDL.Bool],

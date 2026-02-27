@@ -1,42 +1,35 @@
-# OOOrgs -- Phase 3a: FinFranFran(tm) Fractionalization Display
+# OOOrgs
 
 ## Current State
-- Phase 2 is complete: OOO Charitable has campaign cards, detail pages, and a three-tab contribution panel (Cash, In-Kind, Volunteer) wired to the backend
-- Backend stores campaigns, donations, gifts, and volunteers
-- Campaign detail page shows progress bar, organizer info, and the contribution panel
-- No fractionalization model exists yet in backend or frontend
+- Full Corporations accounting suite with Income Register, Expense Register, Budget Tracker, Chart of Accounts, and General Ledger placeholder
+- Budget Tracker shows 8 category cards with hardcoded `BUDGET_TARGETS` constant in the frontend
+- Each category card has a "Set Budget" button that is disabled with a tooltip reading "Coming in Phase 5a-ii"
+- No backend storage for budget targets exists yet
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Backend**: FracUnit type -- each campaign can be divided into a configurable number of units (e.g. 1000 units at a unit price). Track total units, units claimed, and unit price per campaign
-- **Backend**: `setCampaignFractionalization` -- set total units and unit price for a campaign
-- **Backend**: `claimFracUnits` -- claim N units for a named participant (simulated, no wallet yet)
-- **Backend**: `getFracUnitsByCampaign` -- return all unit claims for a campaign
-- **Frontend**: `FinFranFranPanel.tsx` -- a dedicated UI panel for the fractionalization model, shown on the campaign detail page beneath the contribution section:
-  - Visual unit grid (e.g. 100 cells representing % of 1000 units) showing claimed vs available
-  - Unit price display (e.g. "1 Unit = $50")
-  - Unit selector (1, 5, 10, 25, 50 units) with running cost calculation
-  - "Claim Units" form: name + unit count + confirm
-  - Live claimed/available counter
-  - Short explainer: what FinFranFran means (fractionalized participation in large projects)
+- Backend: `BudgetTarget` type with `category: Text` and `amount: Float`
+- Backend: `budgetTargets` Map to store budget targets by category
+- Backend: `setBudgetTarget(category: Text, amount: Float) : async Bool` — upsert a budget target
+- Backend: `getBudgetTargets() : async [(Text, Float)]` — return all stored budget targets
+- Frontend: `SetBudgetDialog` modal component — a small dialog with a numeric amount input and Save/Cancel buttons
+- Frontend: Wire the "Set Budget" button on each category card to open the dialog pre-filled with the current budget
+- Frontend: On save, call `actor.setBudgetTarget(category, amount)`, update local state, show toast confirmation
+- Frontend: On page load, fetch `getBudgetTargets()` and merge with default `BUDGET_TARGETS` (backend wins if present)
 
 ### Modify
-- **CampaignDetailPage.tsx**: Add `FinFranFranPanel` beneath the existing contribution tabs
-- Seed 2-3 campaigns with fractionalization data (total units + unit price) via backend calls on app load if none exist
+- `BudgetTracker` component: accept `actor` and `onBudgetUpdated` props; enable "Set Budget" buttons
+- `CorporationsPage`: pass `actor` into `BudgetTracker` and maintain `budgetTargets` state (initialized from defaults, then hydrated from backend)
 
 ### Remove
 - Nothing removed
 
 ## Implementation Plan
-1. Add FracUnit types and functions to backend (Motoko): setCampaignFractionalization, claimFracUnits, getFracUnitsByCampaign
-2. Regenerate backend.d.ts
-3. Build FinFranFranPanel.tsx component with unit grid, selector, claim form
-4. Wire panel into CampaignDetailPage.tsx
-5. Seed fractionalization data for existing campaigns on app init
-
-## UX Notes
-- The unit grid should be visually striking -- use forest green for claimed, parchment/outline for available
-- Keep the FinFranFran explainer brief and accessible (non-financial-jargon)
-- Unit claim is simulated (no wallet) -- just stores name + count in backend
-- Show a confirmation toast when units are claimed successfully
+1. Add `setBudgetTarget` and `getBudgetTargets` functions to `main.mo` with `BudgetTarget` storage
+2. Regenerate `backend.d.ts` bindings (or manually add the two new method signatures)
+3. Update `CorporationsPage` to load budget targets from backend on mount and keep them in state
+4. Update `BudgetTracker` to receive `budgetState`, `actor`, and `onBudgetUpdated` props
+5. Add `SetBudgetDialog` inline component with amount input, validation, loading state, and toast feedback
+6. Enable "Set Budget" button on each category card — opens dialog pre-filled with current budget value
+7. On successful save, update local budget state so progress bars and KPI chips re-render immediately

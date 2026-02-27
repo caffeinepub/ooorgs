@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { label: "Corporations", to: "/corporations" },
   { label: "Co-operatives", to: "/cooperatives" },
   { label: "DAO", to: "/dao" },
+  { label: "🤝 Volunteers", to: "/volunteers" },
 ] as const;
 
 export function NavBar() {

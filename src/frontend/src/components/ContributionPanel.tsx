@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Campaign } from "../backend.d.ts";
 import { useActor } from "../hooks/useActor";
 
@@ -504,6 +505,7 @@ function VolunteerTab({
   actor: NonNullable<ReturnType<typeof useActor>["actor"]>;
   onSuccess: () => void;
 }) {
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [availability, setAvailability] = useState<string[]>([]);
@@ -609,6 +611,26 @@ function VolunteerTab({
 
       <SubmitButton label="🤝 Register Interest" disabled={!isValid} isLoading={isLoading} />
       {error && <InlineError message={error} />}
+
+      <div style={{ textAlign: "center", marginTop: "16px" }}>
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/volunteers" })}
+          style={{
+            background: "none",
+            border: "none",
+            fontFamily: FONT_BODY,
+            fontSize: "0.82rem",
+            color: T.green,
+            cursor: "pointer",
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
+            padding: 0,
+          }}
+        >
+          Or browse all volunteer opportunities →
+        </button>
+      </div>
     </form>
   );
 }

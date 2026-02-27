@@ -15,6 +15,7 @@ import CampaignDetailPage from "./pages/CampaignDetailPage";
 import CorporationsPage from "./pages/CorporationsPage";
 import CooperativesPage from "./pages/CooperativesPage";
 import DaoPage from "./pages/DaoPage";
+import VolunteerBoardPage from "./pages/VolunteerBoardPage";
 import { useActor } from "./hooks/useActor";
 
 // ─── FinFranFran seed settings ────────────────────────────────────────────────
@@ -141,6 +142,12 @@ const daoRoute = createRoute({
   component: DaoPage,
 });
 
+const volunteersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/volunteers",
+  component: VolunteerBoardPage,
+});
+
 const catchAllRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "*",
@@ -155,6 +162,7 @@ const routeTree = rootRoute.addChildren([
   corporationsRoute,
   cooperativesRoute,
   daoRoute,
+  volunteersRoute,
   catchAllRoute,
 ]);
 

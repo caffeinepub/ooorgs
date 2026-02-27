@@ -143,27 +143,83 @@ export interface Volunteer {
     timestamp: Time;
     skills: string;
 }
+export interface IncomeEntry {
+    id: bigint;
+    ref: string;
+    source: string;
+    date: string;
+    createdAt: Time;
+    description: string;
+    category: string;
+    amount: number;
+}
+export interface ExpenseEntry {
+    id: bigint;
+    ref: string;
+    date: string;
+    createdAt: Time;
+    description: string;
+    vendor: string;
+    category: string;
+    amount: number;
+}
 export interface backendInterface {
+    addExpenseEntry(date: string, ref: string, description: string, category: string, vendor: string, amount: number): Promise<ExpenseEntry>;
+    addIncomeEntry(date: string, ref: string, description: string, category: string, source: string, amount: number): Promise<IncomeEntry>;
     allCampaigns(): Promise<Array<Campaign>>;
     claimUnits(campaignId: bigint, claimantName: string, units: bigint): Promise<boolean>;
     createCampaign(title: string, shortDescription: string, fullDescription: string, category: string, goalAmount: number, organizerName: string, organizerBio: string, imageUrl: string, startAt: Time, endAt: Time, tags: Array<string>): Promise<Campaign>;
     getActiveCampaigns(): Promise<Array<Campaign>>;
+    getAllExpenseEntries(): Promise<Array<ExpenseEntry>>;
     getAllFractionalizationSettings(): Promise<Array<[bigint, FractionalizationSettings]>>;
+    getAllIncomeEntries(): Promise<Array<IncomeEntry>>;
+    getBudgetTargets(): Promise<Array<[string, number]>>;
     getCampaign(id: bigint): Promise<Campaign | null>;
     getCampaignsByCategory(category: string): Promise<Array<Campaign>>;
     getDonationsByCampaign(campaignId: bigint): Promise<Array<Donation>>;
+    getExpenseEntriesByCategory(category: string): Promise<Array<ExpenseEntry>>;
     getFractionalizationSettings(campaignId: bigint): Promise<FractionalizationSettings | null>;
     getGiftsByCampaign(campaignId: bigint): Promise<Array<Gift>>;
+    getIncomeEntriesByCategory(category: string): Promise<Array<IncomeEntry>>;
     getUnitClaims(campaignId: bigint): Promise<Array<UnitClaim>>;
     getVolunteersByCampaign(campaignId: bigint): Promise<Array<Volunteer>>;
     recordDonation(campaignId: bigint, amount: number, donorName: string): Promise<Campaign | null>;
     recordGift(campaignId: bigint, itemName: string, estimatedValue: number, description: string, contactEmail: string): Promise<boolean>;
     registerVolunteer(campaignId: bigint, fullName: string, email: string, availability: Array<string>, skills: string): Promise<boolean>;
+    setBudgetTarget(category: string, amount: number): Promise<boolean>;
     setFractionalizationSettings(campaignId: bigint, totalUnits: bigint, pricePerUnit: number): Promise<boolean>;
 }
 import type { Campaign as _Campaign, FractionalizationSettings as _FractionalizationSettings } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async addExpenseEntry(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: number): Promise<ExpenseEntry> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addExpenseEntry(arg0, arg1, arg2, arg3, arg4, arg5);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addExpenseEntry(arg0, arg1, arg2, arg3, arg4, arg5);
+            return result;
+        }
+    }
+    async addIncomeEntry(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: number): Promise<IncomeEntry> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addIncomeEntry(arg0, arg1, arg2, arg3, arg4, arg5);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addIncomeEntry(arg0, arg1, arg2, arg3, arg4, arg5);
+            return result;
+        }
+    }
     async allCampaigns(): Promise<Array<Campaign>> {
         if (this.processError) {
             try {
@@ -220,6 +276,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getAllExpenseEntries(): Promise<Array<ExpenseEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllExpenseEntries();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllExpenseEntries();
+            return result;
+        }
+    }
     async getAllFractionalizationSettings(): Promise<Array<[bigint, FractionalizationSettings]>> {
         if (this.processError) {
             try {
@@ -231,6 +301,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getAllFractionalizationSettings();
+            return result;
+        }
+    }
+    async getAllIncomeEntries(): Promise<Array<IncomeEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllIncomeEntries();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllIncomeEntries();
+            return result;
+        }
+    }
+    async getBudgetTargets(): Promise<Array<[string, number]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getBudgetTargets();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getBudgetTargets();
             return result;
         }
     }
@@ -276,6 +374,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getExpenseEntriesByCategory(arg0: string): Promise<Array<ExpenseEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getExpenseEntriesByCategory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getExpenseEntriesByCategory(arg0);
+            return result;
+        }
+    }
     async getFractionalizationSettings(arg0: bigint): Promise<FractionalizationSettings | null> {
         if (this.processError) {
             try {
@@ -301,6 +413,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getGiftsByCampaign(arg0);
+            return result;
+        }
+    }
+    async getIncomeEntriesByCategory(arg0: string): Promise<Array<IncomeEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getIncomeEntriesByCategory(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getIncomeEntriesByCategory(arg0);
             return result;
         }
     }
@@ -371,6 +497,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.registerVolunteer(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async setBudgetTarget(arg0: string, arg1: number): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setBudgetTarget(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setBudgetTarget(arg0, arg1);
             return result;
         }
     }

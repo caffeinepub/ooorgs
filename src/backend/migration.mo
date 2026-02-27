@@ -1,11 +1,10 @@
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
-import Text "mo:core/Text";
 import Float "mo:core/Float";
 import Time "mo:core/Time";
 
 module {
-  type OldCampaign = {
+  type Campaign = {
     id : Nat;
     title : Text;
     shortDescription : Text;
@@ -23,7 +22,7 @@ module {
     tags : [Text];
   };
 
-  type OldDonation = {
+  type Donation = {
     id : Nat;
     campaignId : Nat;
     amount : Float;
@@ -31,7 +30,7 @@ module {
     timestamp : Time.Time;
   };
 
-  type OldGift = {
+  type Gift = {
     id : Nat;
     campaignId : Nat;
     itemName : Text;
@@ -41,7 +40,7 @@ module {
     timestamp : Time.Time;
   };
 
-  type OldVolunteer = {
+  type Volunteer = {
     id : Nat;
     campaignId : Nat;
     fullName : Text;
@@ -49,17 +48,6 @@ module {
     availability : [Text];
     skills : Text;
     timestamp : Time.Time;
-  };
-
-  type OldActor = {
-    campaigns : Map.Map<Nat, OldCampaign>;
-    donations : Map.Map<Nat, OldDonation>;
-    gifts : Map.Map<Nat, OldGift>;
-    volunteers : Map.Map<Nat, OldVolunteer>;
-    nextCampaignId : Nat;
-    nextDonationId : Nat;
-    nextGiftId : Nat;
-    nextVolunteerId : Nat;
   };
 
   type FractionalizationSettings = {
@@ -75,24 +63,65 @@ module {
     timestamp : Time.Time;
   };
 
-  type NewActor = {
-    campaigns : Map.Map<Nat, OldCampaign>;
-    donations : Map.Map<Nat, OldDonation>;
-    gifts : Map.Map<Nat, OldGift>;
-    volunteers : Map.Map<Nat, OldVolunteer>;
+  type IncomeEntry = {
+    id : Nat;
+    date : Text;
+    ref : Text;
+    description : Text;
+    category : Text;
+    source : Text;
+    amount : Float;
+    createdAt : Time.Time;
+  };
+
+  type ExpenseEntry = {
+    id : Nat;
+    date : Text;
+    ref : Text;
+    description : Text;
+    category : Text;
+    vendor : Text;
+    amount : Float;
+    createdAt : Time.Time;
+  };
+
+  type OldActor = {
+    campaigns : Map.Map<Nat, Campaign>;
+    donations : Map.Map<Nat, Donation>;
+    gifts : Map.Map<Nat, Gift>;
+    volunteers : Map.Map<Nat, Volunteer>;
     fractionalizationSettings : Map.Map<Nat, FractionalizationSettings>;
     unitClaims : Map.Map<Nat, [UnitClaim]>;
+    incomeEntries : Map.Map<Nat, IncomeEntry>;
+    expenseEntries : Map.Map<Nat, ExpenseEntry>;
     nextCampaignId : Nat;
     nextDonationId : Nat;
     nextGiftId : Nat;
     nextVolunteerId : Nat;
+    nextIncomeEntryId : Nat;
+    nextExpenseEntryId : Nat;
   };
 
+  type NewActor = {
+    campaigns : Map.Map<Nat, Campaign>;
+    donations : Map.Map<Nat, Donation>;
+    gifts : Map.Map<Nat, Gift>;
+    volunteers : Map.Map<Nat, Volunteer>;
+    fractionalizationSettings : Map.Map<Nat, FractionalizationSettings>;
+    unitClaims : Map.Map<Nat, [UnitClaim]>;
+    incomeEntries : Map.Map<Nat, IncomeEntry>;
+    expenseEntries : Map.Map<Nat, ExpenseEntry>;
+    budgetTargets : Map.Map<Text, Float>;
+    nextCampaignId : Nat;
+    nextDonationId : Nat;
+    nextGiftId : Nat;
+    nextVolunteerId : Nat;
+    nextIncomeEntryId : Nat;
+    nextExpenseEntryId : Nat;
+  };
+
+  /// Migration function to add budgetTargets to actor
   public func run(old : OldActor) : NewActor {
-    {
-      old with
-      fractionalizationSettings = Map.empty<Nat, FractionalizationSettings>();
-      unitClaims = Map.empty<Nat, [UnitClaim]>();
-    };
+    { old with budgetTargets = Map.empty<Text, Float>() };
   };
 };
