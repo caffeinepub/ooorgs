@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Heart, Building2, Users, Scale } from "lucide-react";
+import { Building2, Heart, Scale, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_GOLD = "oklch(0.72 0.14 72)";

@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useActor } from "../hooks/useActor";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Campaign } from "../backend.d.ts";
 import VolunteerOpportunityCard from "../components/VolunteerOpportunityCard";
+import { useActor } from "../hooks/useActor";
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -139,7 +139,10 @@ interface VolunteerStatsBarProps {
   totalVolunteers: number;
 }
 
-function VolunteerStatsBar({ campaigns, totalVolunteers }: VolunteerStatsBarProps) {
+function VolunteerStatsBar({
+  campaigns,
+  totalVolunteers,
+}: VolunteerStatsBarProps) {
   const activeCampaigns = campaigns.filter((c) => c.active).length;
   const skillsCount = new Set(campaigns.map((c) => c.category)).size * 3;
   const timeSlotsCount = 4; // weekday morning/afternoon, evenings, weekends
@@ -231,13 +234,15 @@ export function VolunteerBoardPage() {
             actor
               .getVolunteersByCampaign(c.id)
               .then((vs) => vs.length)
-              .catch(() => 0)
-          )
+              .catch(() => 0),
+          ),
         );
         setTotalVolunteers(volunteerCounts.reduce((sum, n) => sum + n, 0));
       }
     } catch (err) {
-      setError("Unable to load volunteer opportunities. Please try again shortly.");
+      setError(
+        "Unable to load volunteer opportunities. Please try again shortly.",
+      );
       console.error("Volunteer board load error:", err);
       loadedRef.current = false;
     } finally {
@@ -345,7 +350,9 @@ export function VolunteerBoardPage() {
                 margin: "0 auto 24px",
               }}
             >
-              Every cause here needs passionate people, not just funding. Offer your time, your skills, or your presence — and become part of the change you want to see in the world.
+              Every cause here needs passionate people, not just funding. Offer
+              your time, your skills, or your presence — and become part of the
+              change you want to see in the world.
             </p>
 
             <button
@@ -378,10 +385,19 @@ export function VolunteerBoardPage() {
         </header>
 
         {/* ── Content container ────────────────────────────────── */}
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 0" }}>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "48px 24px 0",
+          }}
+        >
           {/* Stats bar */}
           {!isLoading && !error && campaigns.length > 0 && (
-            <VolunteerStatsBar campaigns={campaigns} totalVolunteers={totalVolunteers} />
+            <VolunteerStatsBar
+              campaigns={campaigns}
+              totalVolunteers={totalVolunteers}
+            />
           )}
 
           {/* ── Error state ───────────────────────────────────── */}
@@ -450,7 +466,9 @@ export function VolunteerBoardPage() {
                   color: T.muted,
                 }}
               >
-                {activeCampaigns.length} campaign{activeCampaigns.length !== 1 ? "s" : ""} welcoming volunteers — find the one that speaks to you.
+                {activeCampaigns.length} campaign
+                {activeCampaigns.length !== 1 ? "s" : ""} welcoming volunteers —
+                find the one that speaks to you.
               </p>
             </div>
           )}
@@ -522,7 +540,8 @@ export function VolunteerBoardPage() {
                     lineHeight: 1.7,
                   }}
                 >
-                  Volunteer opportunities will appear here once campaigns are launched. Check back soon — or start a campaign yourself!
+                  Volunteer opportunities will appear here once campaigns are
+                  launched. Check back soon — or start a campaign yourself!
                 </p>
                 <button
                   type="button"

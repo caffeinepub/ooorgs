@@ -1,7 +1,7 @@
-import HeroSection from "../components/HeroSection";
-import StatsBar from "../components/StatsBar";
 import BranchCards from "../components/BranchCards";
+import HeroSection from "../components/HeroSection";
 import RoadmapAccordion from "../components/RoadmapAccordion";
+import StatsBar from "../components/StatsBar";
 
 export function HomePage() {
   return (

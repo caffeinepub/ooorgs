@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import OOOrgsLogo from "./OOOrgsLogo";
-import { Button } from "@/components/ui/button";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_GOLD = "oklch(0.72 0.14 72)";
@@ -14,13 +14,16 @@ function useStaggerReveal(count: number, delayMs = 60) {
     const timers: ReturnType<typeof setTimeout>[] = [];
     for (let i = 0; i < count; i++) {
       timers.push(
-        setTimeout(() => {
-          setRevealed((prev) => {
-            const next = [...prev];
-            next[i] = true;
-            return next;
-          });
-        }, 200 + i * delayMs)
+        setTimeout(
+          () => {
+            setRevealed((prev) => {
+              const next = [...prev];
+              next[i] = true;
+              return next;
+            });
+          },
+          200 + i * delayMs,
+        ),
       );
     }
     return () => timers.forEach(clearTimeout);
@@ -139,7 +142,9 @@ export function HeroSection() {
               style={{
                 display: "inline-block",
                 opacity: letterRevealed[charIndex] ? 1 : 0,
-                transform: letterRevealed[charIndex] ? "translateY(0)" : "translateY(16px)",
+                transform: letterRevealed[charIndex]
+                  ? "translateY(0)"
+                  : "translateY(16px)",
                 transition: "opacity 0.45s ease, transform 0.45s ease",
               }}
             >
@@ -227,14 +232,20 @@ export function HeroSection() {
               boxShadow: "0 4px 20px oklch(0.38 0.12 155 / 0.25)",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = OOO_GREEN_LIGHT;
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 28px oklch(0.38 0.12 155 / 0.35)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                OOO_GREEN_LIGHT;
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 6px 28px oklch(0.38 0.12 155 / 0.35)";
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(-1px)";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = OOO_GREEN;
-              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 20px oklch(0.38 0.12 155 / 0.25)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                OOO_GREEN;
+              (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                "0 4px 20px oklch(0.38 0.12 155 / 0.25)";
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(0)";
             }}
           >
             Explore Our Branches
@@ -256,12 +267,16 @@ export function HeroSection() {
               cursor: "pointer",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = "oklch(0.38 0.12 155 / 0.06)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "oklch(0.38 0.12 155 / 0.06)";
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(-1px)";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLButtonElement).style.background =
+                "transparent";
+              (e.currentTarget as HTMLButtonElement).style.transform =
+                "translateY(0)";
             }}
           >
             Learn More
@@ -279,7 +294,10 @@ export function HeroSection() {
         >
           <span
             className="text-xs tracking-widest uppercase"
-            style={{ color: OOO_CHARCOAL, fontFamily: "'Inter', system-ui, sans-serif" }}
+            style={{
+              color: OOO_CHARCOAL,
+              fontFamily: "'Inter', system-ui, sans-serif",
+            }}
           >
             Discover
           </span>

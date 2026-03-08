@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import type { Campaign } from "../backend.d.ts";
 import { useActor } from "../hooks/useActor";
 
@@ -114,8 +114,7 @@ function InlineError({ message }: { message: string }) {
 
 // ─── Success card ─────────────────────────────────────────────────────────────
 const SUCCESS_MESSAGES: Record<TabKey, string> = {
-  cash:
-    "Your generous donation is making a real difference. Every contribution, large or small, brings this campaign closer to its goal.",
+  cash: "Your generous donation is making a real difference. Every contribution, large or small, brings this campaign closer to its goal.",
   inkind:
     "Your in-kind gift has been received. Our team will be in touch soon to arrange collection or delivery details.",
   volunteer:
@@ -284,7 +283,9 @@ function CashTab({
     setSelectedAmount(null);
   };
 
-  const finalAmount = isCustom ? parseFloat(customAmount) : (selectedAmount ?? 0);
+  const finalAmount = isCustom
+    ? Number.parseFloat(customAmount)
+    : (selectedAmount ?? 0);
   const hasAmount = finalAmount > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -295,7 +296,11 @@ function CashTab({
     setError(null);
 
     try {
-      const result = await actor.recordDonation(campaignId, finalAmount, donorName || "Anonymous");
+      const result = await actor.recordDonation(
+        campaignId,
+        finalAmount,
+        donorName || "Anonymous",
+      );
       if (result !== null && onCampaignUpdated) {
         onCampaignUpdated(result);
       }
@@ -322,7 +327,8 @@ function CashTab({
                 padding: "9px 18px",
                 borderRadius: "8px",
                 border: `1.5px solid ${selectedAmount === amount ? T.green : T.inputBorder}`,
-                background: selectedAmount === amount ? T.greenLight : T.inputBg,
+                background:
+                  selectedAmount === amount ? T.greenLight : T.inputBg,
                 color: selectedAmount === amount ? T.green : T.charcoal,
                 fontFamily: FONT_BODY,
                 fontSize: "0.9rem",
@@ -366,8 +372,12 @@ function CashTab({
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
             style={inputStyle}
-            onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-            onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = T.inputFocus;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = T.inputBorder;
+            }}
           />
         </FieldGroup>
       )}
@@ -380,13 +390,21 @@ function CashTab({
           value={donorName}
           onChange={(e) => setDonorName(e.target.value)}
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
       {/* Submit */}
-      <SubmitButton label="💷 Donate Now" disabled={!hasAmount} isLoading={isLoading} />
+      <SubmitButton
+        label="💷 Donate Now"
+        disabled={!hasAmount}
+        isLoading={isLoading}
+      />
       {error && <InlineError message={error} />}
     </form>
   );
@@ -422,7 +440,7 @@ function InKindTab({
       await actor.recordGift(
         campaignId,
         itemName,
-        estimatedValue ? parseFloat(estimatedValue) : 0,
+        estimatedValue ? Number.parseFloat(estimatedValue) : 0,
         description,
         contactEmail,
       );
@@ -445,8 +463,12 @@ function InKindTab({
           onChange={(e) => setItemName(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
@@ -459,8 +481,12 @@ function InKindTab({
           value={estimatedValue}
           onChange={(e) => setEstimatedValue(e.target.value)}
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
@@ -471,8 +497,12 @@ function InKindTab({
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
           style={{ ...inputStyle, resize: "vertical", minHeight: "80px" }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
@@ -484,12 +514,20 @@ function InKindTab({
           onChange={(e) => setContactEmail(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
-      <SubmitButton label="🎁 Submit Gift" disabled={!isValid} isLoading={isLoading} />
+      <SubmitButton
+        label="🎁 Submit Gift"
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {error && <InlineError message={error} />}
     </form>
   );
@@ -515,7 +553,7 @@ function VolunteerTab({
 
   const toggleAvailability = (id: string) => {
     setAvailability((prev) =>
-      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id],
     );
   };
 
@@ -529,7 +567,13 @@ function VolunteerTab({
     setError(null);
 
     try {
-      await actor.registerVolunteer(campaignId, fullName, email, availability, skills);
+      await actor.registerVolunteer(
+        campaignId,
+        fullName,
+        email,
+        availability,
+        skills,
+      );
       onSuccess();
     } catch (err) {
       console.error("Volunteer error:", err);
@@ -549,8 +593,12 @@ function VolunteerTab({
           onChange={(e) => setFullName(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
@@ -562,8 +610,12 @@ function VolunteerTab({
           onChange={(e) => setEmail(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
@@ -604,12 +656,20 @@ function VolunteerTab({
           onChange={(e) => setSkills(e.target.value)}
           rows={3}
           style={{ ...inputStyle, resize: "vertical", minHeight: "80px" }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </FieldGroup>
 
-      <SubmitButton label="🤝 Register Interest" disabled={!isValid} isLoading={isLoading} />
+      <SubmitButton
+        label="🤝 Register Interest"
+        disabled={!isValid}
+        isLoading={isLoading}
+      />
       {error && <InlineError message={error} />}
 
       <div style={{ textAlign: "center", marginTop: "16px" }}>
@@ -641,7 +701,10 @@ interface ContributionPanelProps {
   onCampaignUpdated?: (updated: Campaign) => void;
 }
 
-export function ContributionPanel({ campaign, onCampaignUpdated }: ContributionPanelProps) {
+export function ContributionPanel({
+  campaign,
+  onCampaignUpdated,
+}: ContributionPanelProps) {
   const { actor } = useActor();
   const [activeTab, setActiveTab] = useState<TabKey>("cash");
   const [submitted, setSubmitted] = useState<TabKey | null>(null);
@@ -667,7 +730,9 @@ export function ContributionPanel({ campaign, onCampaignUpdated }: ContributionP
           boxShadow: "0 4px 24px oklch(0.18 0.01 200 / 0.07)",
         }}
       >
-        <p style={{ fontFamily: FONT_BODY, fontSize: "0.9rem", color: T.muted }}>
+        <p
+          style={{ fontFamily: FONT_BODY, fontSize: "0.9rem", color: T.muted }}
+        >
           Loading contribution options…
         </p>
       </section>
@@ -719,7 +784,12 @@ export function ContributionPanel({ campaign, onCampaignUpdated }: ContributionP
 
       <section className="ooo-contribution-panel">
         {/* Panel heading */}
-        <div style={{ padding: "24px 28px 0", borderBottom: `1px solid ${T.border}` }}>
+        <div
+          style={{
+            padding: "24px 28px 0",
+            borderBottom: `1px solid ${T.border}`,
+          }}
+        >
           <h3
             style={{
               fontFamily: FONT_DISPLAY,
@@ -739,7 +809,8 @@ export function ContributionPanel({ campaign, onCampaignUpdated }: ContributionP
               marginBottom: "16px",
             }}
           >
-            Choose how you'd like to contribute — every act of generosity counts.
+            Choose how you'd like to contribute — every act of generosity
+            counts.
           </p>
 
           {/* Tabs */}

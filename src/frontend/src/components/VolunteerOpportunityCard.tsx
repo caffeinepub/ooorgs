@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { Campaign } from "../backend.d.ts";
 import { useActor } from "../hooks/useActor";
 
@@ -128,7 +128,7 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
 
   const toggleAvailability = (id: string) => {
     setAvailability((prev) =>
-      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id],
     );
   };
 
@@ -140,7 +140,13 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
     setError(null);
 
     try {
-      await actor.registerVolunteer(campaignId, fullName, email, availability, skills);
+      await actor.registerVolunteer(
+        campaignId,
+        fullName,
+        email,
+        availability,
+        skills,
+      );
       onSuccess(fullName);
     } catch (err) {
       console.error("Volunteer registration error:", err);
@@ -158,7 +164,7 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
         padding: "20px",
         background: T.greenLight,
         borderRadius: "12px",
-        border: `1px solid oklch(0.84 0.07 155)`,
+        border: "1px solid oklch(0.84 0.07 155)",
         animation: "ooo-expand 0.3s ease forwards",
       }}
     >
@@ -172,8 +178,12 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
           onChange={(e) => setFullName(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </div>
 
@@ -187,8 +197,12 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           required
           style={inputStyle}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </div>
 
@@ -233,8 +247,12 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
           onChange={(e) => setSkills(e.target.value)}
           rows={3}
           style={{ ...inputStyle, resize: "vertical", minHeight: "72px" }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = T.inputFocus;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = T.inputBorder;
+          }}
         />
       </div>
 
@@ -257,10 +275,12 @@ function SignUpForm({ campaignId, onSuccess, onCancel }: SignUpFormProps) {
             transition: "background 0.15s",
           }}
           onMouseEnter={(e) => {
-            if (isValid && !isLoading) e.currentTarget.style.background = T.greenDark;
+            if (isValid && !isLoading)
+              e.currentTarget.style.background = T.greenDark;
           }}
           onMouseLeave={(e) => {
-            if (isValid && !isLoading) e.currentTarget.style.background = T.green;
+            if (isValid && !isLoading)
+              e.currentTarget.style.background = T.green;
           }}
         >
           {isLoading ? "Registering..." : "🤝 Register Interest"}
@@ -306,7 +326,9 @@ interface VolunteerOpportunityCardProps {
   campaign: Campaign;
 }
 
-export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardProps) {
+export function VolunteerOpportunityCard({
+  campaign,
+}: VolunteerOpportunityCardProps) {
   const { actor } = useActor();
   const [volunteerCount, setVolunteerCount] = useState<number | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -342,7 +364,8 @@ export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardP
         boxShadow: hovered
           ? "0 8px 32px oklch(0.38 0.12 155 / 0.12)"
           : "0 2px 12px oklch(0.18 0.01 200 / 0.06)",
-        transition: "box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease",
+        transition:
+          "box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease",
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
         display: "flex",
         flexDirection: "column",
@@ -352,7 +375,14 @@ export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardP
       {/* Category accent bar */}
       <div style={{ height: "4px", background: colors.bar, flexShrink: 0 }} />
 
-      <div style={{ padding: "22px 24px 24px", display: "flex", flexDirection: "column", flex: 1 }}>
+      <div
+        style={{
+          padding: "22px 24px 24px",
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+        }}
+      >
         {/* Top row: category badge + volunteer count */}
         <div
           style={{
@@ -397,7 +427,8 @@ export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardP
               }}
             >
               <span style={{ fontSize: "0.9em" }}>🤝</span>
-              {volunteerCount} volunteer{volunteerCount !== 1 ? "s" : ""} registered
+              {volunteerCount} volunteer{volunteerCount !== 1 ? "s" : ""}{" "}
+              registered
             </span>
           )}
         </div>
@@ -485,7 +516,9 @@ export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardP
         </div>
 
         {/* Divider */}
-        <div style={{ height: "1px", background: T.border, marginBottom: "18px" }} />
+        <div
+          style={{ height: "1px", background: T.border, marginBottom: "18px" }}
+        />
 
         {/* Success message */}
         {successName && !formOpen && (
@@ -538,8 +571,12 @@ export function VolunteerOpportunityCard({ campaign }: VolunteerOpportunityCardP
               transition: "background 0.15s",
               letterSpacing: "0.02em",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = T.greenDark; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = T.green; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = T.greenDark;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = T.green;
+            }}
           >
             🌿 I Want to Volunteer
           </button>

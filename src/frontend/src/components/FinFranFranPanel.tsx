@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { useActor } from "../hooks/useActor";
-import type { FractionalizationSettings, UnitClaim } from "../backend.d.ts";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { FractionalizationSettings, UnitClaim } from "../backend.d.ts";
+import { useActor } from "../hooks/useActor";
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -72,7 +72,10 @@ function UnitGrid({ totalUnits, unitsSold, pendingUnits = 0 }: UnitGridProps) {
   const pendingPercent = total > 0 ? (pendingUnits / total) * GRID_SIZE : 0;
 
   const claimedCells = Math.round(claimedPercent);
-  const pendingCells = Math.min(Math.round(pendingPercent), GRID_SIZE - claimedCells);
+  const pendingCells = Math.min(
+    Math.round(pendingPercent),
+    GRID_SIZE - claimedCells,
+  );
 
   return (
     <div>
@@ -101,16 +104,18 @@ function UnitGrid({ totalUnits, unitsSold, pendingUnits = 0 }: UnitGridProps) {
                   isClaimed
                     ? T.cellClaimed
                     : isPending
-                    ? T.goldMid
-                    : T.cellBorder
+                      ? T.goldMid
+                      : T.cellBorder
                 }`,
                 background: isClaimed
                   ? T.cellClaimed
                   : isPending
-                  ? T.goldLight
-                  : T.cellAvailable,
+                    ? T.goldLight
+                    : T.cellAvailable,
                 transition: "background 0.2s, border-color 0.2s",
-                animation: isClaimed ? `fffCellPop 0.3s ease ${(i * 8)}ms backwards` : undefined,
+                animation: isClaimed
+                  ? `fffCellPop 0.3s ease ${i * 8}ms backwards`
+                  : undefined,
               }}
             />
           );
@@ -325,83 +330,86 @@ function RecentClaims({ claims }: RecentClaimsProps) {
       {claims.slice(0, 5).map((claim, i) => {
         const claimKey = `${claim.claimantName}-${String(claim.timestamp)}-${i}`;
         return (
-        <div
-          key={claimKey}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "12px 16px",
-            background: i % 2 === 0 ? T.white : T.cream,
-            borderBottom: i < Math.min(claims.length, 5) - 1 ? `1px solid ${T.border}` : "none",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: T.greenLight,
-                border: `2px solid ${T.green}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: T.green,
-                fontFamily: FONT_MONO,
-                flexShrink: 0,
-              }}
-            >
-              {claim.claimantName.slice(0, 2).toUpperCase()}
-            </div>
-            <div>
-              <p
-                style={{
-                  fontFamily: FONT_BODY,
-                  fontSize: "0.88rem",
-                  fontWeight: 600,
-                  color: T.charcoal,
-                  marginBottom: "2px",
-                }}
-              >
-                {claim.claimantName}
-              </p>
-              <p
-                style={{
-                  fontFamily: FONT_BODY,
-                  fontSize: "0.72rem",
-                  color: T.muted,
-                }}
-              >
-                {formatTimestamp(claim.timestamp)}
-              </p>
-            </div>
-          </div>
           <div
+            key={claimKey}
             style={{
-              fontFamily: FONT_DISPLAY,
-              fontSize: "1rem",
-              fontWeight: 700,
-              color: T.green,
-              textAlign: "right",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "12px 16px",
+              background: i % 2 === 0 ? T.white : T.cream,
+              borderBottom:
+                i < Math.min(claims.length, 5) - 1
+                  ? `1px solid ${T.border}`
+                  : "none",
             }}
           >
-            {Number(claim.unitsClaimed).toLocaleString()}
-            <span
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  background: T.greenLight,
+                  border: `2px solid ${T.green}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: T.green,
+                  fontFamily: FONT_MONO,
+                  flexShrink: 0,
+                }}
+              >
+                {claim.claimantName.slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.88rem",
+                    fontWeight: 600,
+                    color: T.charcoal,
+                    marginBottom: "2px",
+                  }}
+                >
+                  {claim.claimantName}
+                </p>
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.72rem",
+                    color: T.muted,
+                  }}
+                >
+                  {formatTimestamp(claim.timestamp)}
+                </p>
+              </div>
+            </div>
+            <div
               style={{
-                fontFamily: FONT_BODY,
-                fontSize: "0.7rem",
-                fontWeight: 500,
-                color: T.muted,
-                marginLeft: "4px",
+                fontFamily: FONT_DISPLAY,
+                fontSize: "1rem",
+                fontWeight: 700,
+                color: T.green,
+                textAlign: "right",
               }}
             >
-              units
-            </span>
+              {Number(claim.unitsClaimed).toLocaleString()}
+              <span
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.7rem",
+                  fontWeight: 500,
+                  color: T.muted,
+                  marginLeft: "4px",
+                }}
+              >
+                units
+              </span>
+            </div>
           </div>
-        </div>
         );
       })}
     </div>
@@ -440,7 +448,8 @@ function NoFracSettingsCard() {
           lineHeight: 1.7,
         }}
       >
-        FinFranFran™ unit offerings for this campaign are being configured. Check back soon to claim your share!
+        FinFranFran™ unit offerings for this campaign are being configured.
+        Check back soon to claim your share!
       </p>
     </div>
   );
@@ -454,7 +463,9 @@ interface FinFranFranPanelProps {
 export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
   const { actor, isFetching: actorLoading } = useActor();
 
-  const [settings, setSettings] = useState<FractionalizationSettings | null>(null);
+  const [settings, setSettings] = useState<FractionalizationSettings | null>(
+    null,
+  );
   const [claims, setClaims] = useState<UnitClaim[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
@@ -508,7 +519,9 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
       );
 
       if (success) {
-        toast.success(`${selectedUnits} unit${selectedUnits !== 1 ? "s" : ""} claimed successfully! 🎉`);
+        toast.success(
+          `${selectedUnits} unit${selectedUnits !== 1 ? "s" : ""} claimed successfully! 🎉`,
+        );
         setClaimantName("");
         setSelectedUnits(5);
         // Refresh data to show updated counts
@@ -539,7 +552,8 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
       >
         <div
           style={{
-            background: "linear-gradient(90deg, oklch(0.92 0.02 88) 25%, oklch(0.96 0.01 88) 50%, oklch(0.92 0.02 88) 75%)",
+            background:
+              "linear-gradient(90deg, oklch(0.92 0.02 88) 25%, oklch(0.96 0.01 88) 50%, oklch(0.92 0.02 88) 75%)",
             backgroundSize: "200% 100%",
             animation: "fffShimmer 1.5s infinite",
             height: "24px",
@@ -550,7 +564,8 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
         />
         <div
           style={{
-            background: "linear-gradient(90deg, oklch(0.92 0.02 88) 25%, oklch(0.96 0.01 88) 50%, oklch(0.92 0.02 88) 75%)",
+            background:
+              "linear-gradient(90deg, oklch(0.92 0.02 88) 25%, oklch(0.96 0.01 88) 50%, oklch(0.92 0.02 88) 75%)",
             backgroundSize: "200% 100%",
             animation: "fffShimmer 1.5s infinite",
             height: "160px",
@@ -561,8 +576,7 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
     );
   }
 
-  const totalCost =
-    settings ? selectedUnits * settings.pricePerUnit : 0;
+  const totalCost = settings ? selectedUnits * settings.pricePerUnit : 0;
   const available = settings
     ? Number(settings.totalUnits) - Number(settings.unitsSold)
     : 0;
@@ -613,7 +627,8 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
           border: `1px solid ${T.border}`,
           overflow: "hidden",
           marginTop: "36px",
-          boxShadow: "0 4px 32px oklch(0.18 0.01 200 / 0.08), 0 1px 4px oklch(0.18 0.01 200 / 0.04)",
+          boxShadow:
+            "0 4px 32px oklch(0.18 0.01 200 / 0.08), 0 1px 4px oklch(0.18 0.01 200 / 0.04)",
         }}
       >
         {/* ── Panel header ───────────────────────────────────────────────── */}
@@ -644,14 +659,21 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                 justifyContent: "center",
                 fontSize: "1.4rem",
                 flexShrink: 0,
-                boxShadow: `0 4px 12px oklch(0.38 0.12 155 / 0.30)`,
+                boxShadow: "0 4px 12px oklch(0.38 0.12 155 / 0.30)",
               }}
             >
               🌿
             </div>
 
             <div style={{ flex: 1, minWidth: "200px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                }}
+              >
                 <h3
                   style={{
                     fontFamily: FONT_DISPLAY,
@@ -672,7 +694,7 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                     textTransform: "uppercase",
                     color: T.green,
                     background: T.greenLight,
-                    border: `1px solid oklch(0.72 0.08 155)`,
+                    border: "1px solid oklch(0.72 0.08 155)",
                     borderRadius: "999px",
                     padding: "3px 10px",
                   }}
@@ -690,7 +712,9 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                   maxWidth: "540px",
                 }}
               >
-                FinFranFran™ divides large projects into affordable participation units. Claim your share and become a fractional co-owner of this campaign's impact.
+                FinFranFran™ divides large projects into affordable
+                participation units. Claim your share and become a fractional
+                co-owner of this campaign's impact.
               </p>
             </div>
           </div>
@@ -767,7 +791,9 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                     >
                       How Many Units?
                     </span>
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <div
+                      style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                    >
                       {UNIT_PRESETS.map((qty) => {
                         const isSelected = selectedUnits === qty;
                         const isOver = qty > available;
@@ -788,15 +814,19 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                                 isSelected
                                   ? T.green
                                   : isOver
-                                  ? T.border
-                                  : T.inputBorder
+                                    ? T.border
+                                    : T.inputBorder
                               }`,
                               background: isSelected
                                 ? T.greenLight
                                 : isOver
-                                ? "oklch(0.93 0.01 88)"
-                                : T.white,
-                              color: isSelected ? T.green : isOver ? T.border : T.charcoal,
+                                  ? "oklch(0.93 0.01 88)"
+                                  : T.white,
+                              color: isSelected
+                                ? T.green
+                                : isOver
+                                  ? T.border
+                                  : T.charcoal,
                               fontFamily: FONT_BODY,
                               fontSize: "0.9rem",
                               fontWeight: isSelected ? 700 : 500,
@@ -833,7 +863,8 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                         color: T.muted,
                       }}
                     >
-                      {selectedUnits.toLocaleString()} units × {formatCurrency(settings.pricePerUnit)}
+                      {selectedUnits.toLocaleString()} units ×{" "}
+                      {formatCurrency(settings.pricePerUnit)}
                     </span>
                     <span
                       style={{
@@ -883,8 +914,12 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                         boxSizing: "border-box",
                         transition: "border-color 0.15s",
                       }}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = T.inputFocus; }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = T.inputFocus;
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = T.inputBorder;
+                      }}
                     />
                   </div>
 
@@ -892,7 +927,9 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                   <button
                     type="submit"
                     className="fff-claim-btn"
-                    disabled={isSubmitting || isUnitOverLimit || available === 0}
+                    disabled={
+                      isSubmitting || isUnitOverLimit || available === 0
+                    }
                     style={{
                       width: "100%",
                       padding: "13px 24px",
@@ -905,11 +942,19 @@ export function FinFranFranPanel({ campaignId }: FinFranFranPanelProps) {
                       fontWeight: 700,
                       cursor: "pointer",
                       letterSpacing: "0.02em",
-                      transition: "background 0.15s, transform 0.15s, box-shadow 0.15s",
+                      transition:
+                        "background 0.15s, transform 0.15s, box-shadow 0.15s",
                     }}
                   >
                     {isSubmitting ? (
-                      <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                        }}
+                      >
                         <span
                           style={{
                             width: "16px",

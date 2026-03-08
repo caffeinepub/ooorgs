@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Scale, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Scale } from "lucide-react";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_GOLD = "oklch(0.72 0.14 72)";
@@ -128,16 +128,17 @@ export function DaoPage() {
             marginBottom: "40px",
           }}
         >
-          Phase 7 will unlock proposal creation, live voting, a passed resolutions
-          archive, and sovereignty services — giving every member a meaningful voice
-          in how OOOrgs moves forward.
+          Phase 7 will unlock proposal creation, live voting, a passed
+          resolutions archive, and sovereignty services — giving every member a
+          meaningful voice in how OOOrgs moves forward.
         </p>
 
         {/* Divider */}
         <div
           style={{
             height: "1px",
-            background: "linear-gradient(to right, transparent, oklch(0.88 0.03 88), transparent)",
+            background:
+              "linear-gradient(to right, transparent, oklch(0.88 0.03 88), transparent)",
             marginBottom: "32px",
           }}
         />

@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_GOLD = "oklch(0.72 0.14 72)";
@@ -72,7 +72,8 @@ const PHASES: Phase[] = [
   {
     number: 10,
     title: "Wallet & Live Payments",
-    description: "Real wallet connections, live donations, cross-branch ledger sync",
+    description:
+      "Real wallet connections, live donations, cross-branch ledger sync",
     status: "Planned",
   },
 ];
@@ -92,7 +93,9 @@ function PhaseItem({ phase, isOpen, onToggle }: PhaseItemProps) {
         border: `1px solid ${isOpen ? "oklch(0.38 0.12 155 / 0.25)" : "oklch(0.88 0.03 88)"}`,
         borderRadius: "10px",
         overflow: "hidden",
-        background: isOpen ? "oklch(0.38 0.12 155 / 0.03)" : "oklch(0.97 0.02 88)",
+        background: isOpen
+          ? "oklch(0.38 0.12 155 / 0.03)"
+          : "oklch(0.97 0.02 88)",
         transition: "border-color 0.2s ease, background 0.2s ease",
       }}
     >
@@ -158,7 +161,9 @@ function PhaseItem({ phase, isOpen, onToggle }: PhaseItemProps) {
             letterSpacing: "0.04em",
             textTransform: "uppercase",
             fontFamily: "'Inter', system-ui, sans-serif",
-            background: isInProgress ? "oklch(0.38 0.12 155 / 0.1)" : "oklch(0.88 0.03 88)",
+            background: isInProgress
+              ? "oklch(0.38 0.12 155 / 0.1)"
+              : "oklch(0.88 0.03 88)",
             color: isInProgress ? OOO_GREEN : "oklch(0.55 0.02 200)",
             flexShrink: 0,
           }}
@@ -286,7 +291,8 @@ export function RoadmapAccordion() {
               lineHeight: 1.5,
             }}
           >
-            A transparent roadmap — you know exactly where we are and where we are going.
+            A transparent roadmap — you know exactly where we are and where we
+            are going.
           </p>
         </div>
 

@@ -6,9 +6,9 @@ import Iter "mo:core/Iter";
 import Text "mo:core/Text";
 import Char "mo:core/Char";
 import Time "mo:core/Time";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   public type Campaign = {
     id : Nat;

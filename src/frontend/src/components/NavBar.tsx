@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import OOOrgsLogo from "./OOOrgsLogo";
 import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import OOOrgsLogo from "./OOOrgsLogo";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_CREAM = "oklch(0.97 0.02 88)";
@@ -34,7 +34,7 @@ export function NavBar() {
         top: 0,
         zIndex: 50,
         background: OOO_CREAM,
-        borderBottom: `1px solid oklch(0.88 0.03 88)`,
+        borderBottom: "1px solid oklch(0.88 0.03 88)",
         boxShadow: scrolled ? "0 2px 16px oklch(0.38 0.12 155 / 0.08)" : "none",
         transition: "box-shadow 0.25s ease",
         fontFamily: "'Inter', system-ui, sans-serif",
@@ -84,21 +84,29 @@ export function NavBar() {
                   fontWeight: isActive ? 600 : 500,
                   color: isActive ? OOO_GREEN : OOO_CHARCOAL,
                   textDecoration: "none",
-                  background: isActive ? "oklch(0.38 0.12 155 / 0.07)" : "transparent",
+                  background: isActive
+                    ? "oklch(0.38 0.12 155 / 0.07)"
+                    : "transparent",
                   transition: "color 0.15s ease, background 0.15s ease",
                   letterSpacing: "0.01em",
-                  borderBottom: isActive ? `2px solid ${OOO_GREEN}` : "2px solid transparent",
+                  borderBottom: isActive
+                    ? `2px solid ${OOO_GREEN}`
+                    : "2px solid transparent",
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLAnchorElement).style.color = OOO_GREEN;
-                    (e.currentTarget as HTMLAnchorElement).style.background = "oklch(0.38 0.12 155 / 0.04)";
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      OOO_GREEN;
+                    (e.currentTarget as HTMLAnchorElement).style.background =
+                      "oklch(0.38 0.12 155 / 0.04)";
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLAnchorElement).style.color = OOO_CHARCOAL;
-                    (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      OOO_CHARCOAL;
+                    (e.currentTarget as HTMLAnchorElement).style.background =
+                      "transparent";
                   }
                 }}
               >
@@ -127,11 +135,13 @@ export function NavBar() {
               letterSpacing: "0.01em",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.background = OOO_GREEN;
+              (e.currentTarget as HTMLAnchorElement).style.background =
+                OOO_GREEN;
               (e.currentTarget as HTMLAnchorElement).style.color = OOO_CREAM;
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+              (e.currentTarget as HTMLAnchorElement).style.background =
+                "transparent";
               (e.currentTarget as HTMLAnchorElement).style.color = OOO_GREEN;
             }}
           >
@@ -184,14 +194,22 @@ export function NavBar() {
                     fontWeight: isActive ? 600 : 500,
                     color: isActive ? OOO_GREEN : OOO_CHARCOAL,
                     textDecoration: "none",
-                    background: isActive ? "oklch(0.38 0.12 155 / 0.07)" : "transparent",
+                    background: isActive
+                      ? "oklch(0.38 0.12 155 / 0.07)"
+                      : "transparent",
                   }}
                 >
                   {label}
                 </Link>
               );
             })}
-            <div style={{ marginTop: "8px", paddingTop: "8px", borderTop: "1px solid oklch(0.88 0.03 88)" }}>
+            <div
+              style={{
+                marginTop: "8px",
+                paddingTop: "8px",
+                borderTop: "1px solid oklch(0.88 0.03 88)",
+              }}
+            >
               <Link
                 to="/charitable"
                 onClick={() => setMenuOpen(false)}

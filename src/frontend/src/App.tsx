@@ -1,28 +1,32 @@
-import { useEffect } from "react";
+import { Toaster } from "@/components/ui/sonner";
 import {
-  createRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
   createRootRoute,
   createRoute,
-  RouterProvider,
-  Outlet,
-  Navigate,
+  createRouter,
 } from "@tanstack/react-router";
-import { Toaster } from "@/components/ui/sonner";
+import { useEffect } from "react";
 import NavBar from "./components/NavBar";
-import HomePage from "./pages/HomePage";
-import CharitablePage from "./pages/CharitablePage";
-import CampaignDetailPage from "./pages/CampaignDetailPage";
-import CorporationsPage from "./pages/CorporationsPage";
-import CooperativesPage from "./pages/CooperativesPage";
-import DaoPage from "./pages/DaoPage";
-import VolunteerBoardPage from "./pages/VolunteerBoardPage";
 import { useActor } from "./hooks/useActor";
+import CampaignDetailPage from "./pages/CampaignDetailPage";
+import CharitablePage from "./pages/CharitablePage";
+import CooperativesPage from "./pages/CooperativesPage";
+import CorporationsPage from "./pages/CorporationsPage";
+import DaoPage from "./pages/DaoPage";
+import HomePage from "./pages/HomePage";
+import VolunteerBoardPage from "./pages/VolunteerBoardPage";
 
 // ─── FinFranFran seed settings ────────────────────────────────────────────────
 // Seeds fractionalization settings for the first 3 campaigns if they don't exist.
-const FFF_SEEDS: Array<{ campaignId: bigint; totalUnits: bigint; pricePerUnit: number }> = [
+const FFF_SEEDS: Array<{
+  campaignId: bigint;
+  totalUnits: bigint;
+  pricePerUnit: number;
+}> = [
   { campaignId: 1n, totalUnits: 1000n, pricePerUnit: 25 },
-  { campaignId: 2n, totalUnits: 500n,  pricePerUnit: 100 },
+  { campaignId: 2n, totalUnits: 500n, pricePerUnit: 100 },
   { campaignId: 3n, totalUnits: 2000n, pricePerUnit: 10 },
 ];
 
@@ -36,15 +40,24 @@ function FFFSeeder() {
     Promise.all(
       FFF_SEEDS.map(async (seed) => {
         try {
-          const existing = await actor.getFractionalizationSettings(seed.campaignId);
+          const existing = await actor.getFractionalizationSettings(
+            seed.campaignId,
+          );
           if (existing === null) {
-            await actor.setFractionalizationSettings(seed.campaignId, seed.totalUnits, seed.pricePerUnit);
+            await actor.setFractionalizationSettings(
+              seed.campaignId,
+              seed.totalUnits,
+              seed.pricePerUnit,
+            );
           }
         } catch (err) {
           // Non-fatal: campaign may not exist yet
-          console.warn(`FinFranFran seed skipped for campaign ${seed.campaignId}:`, err);
+          console.warn(
+            `FinFranFran seed skipped for campaign ${seed.campaignId}:`,
+            err,
+          );
         }
-      })
+      }),
     ).catch((err) => {
       console.warn("FinFranFran seed error:", err);
     });

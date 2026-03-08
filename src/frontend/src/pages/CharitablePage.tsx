@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useActor } from "../hooks/useActor";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Campaign } from "../backend.d.ts";
+import { useActor } from "../hooks/useActor";
 
 // ─── Volunteer CTA Banner ─────────────────────────────────────────────────────
 function VolunteerCTABanner() {
@@ -52,7 +52,8 @@ function VolunteerCTABanner() {
               maxWidth: "440px",
             }}
           >
-            Not every contribution is financial. Browse our Volunteer Hub and find a cause that matches your skills, passion, and availability.
+            Not every contribution is financial. Browse our Volunteer Hub and
+            find a cause that matches your skills, passion, and availability.
           </p>
         </div>
       </div>
@@ -73,8 +74,12 @@ function VolunteerCTABanner() {
           whiteSpace: "nowrap",
           flexShrink: 0,
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(0.28 0.10 155)"; }}
-        onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(0.38 0.12 155)"; }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "oklch(0.28 0.10 155)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "oklch(0.38 0.12 155)";
+        }}
       >
         Browse Volunteer Hub →
       </button>
@@ -143,9 +148,17 @@ function getCategoryColors(category: string): CategoryColors {
 // ─── Seed data ────────────────────────────────────────────────────────────────
 // startAt and endAt are nanosecond bigint timestamps for the backend
 type CreateCampaignArgs = [
-  string, string, string, string, number,
-  string, string, string, bigint, bigint,
-  string[]
+  string,
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  bigint,
+  bigint,
+  string[],
 ];
 
 function dateToNs(dateStr: string): bigint {
@@ -234,12 +247,21 @@ const SEED_CAMPAIGNS: CreateCampaignArgs[] = [
 ];
 
 // ─── Filter categories ────────────────────────────────────────────────────────
-const FILTERS = ["All", "Environment", "Education", "Health", "Community", "Arts", "Emergency"];
+const FILTERS = [
+  "All",
+  "Environment",
+  "Education",
+  "Health",
+  "Community",
+  "Arts",
+  "Emergency",
+];
 
 // ─── Loading skeleton ─────────────────────────────────────────────────────────
 function CampaignSkeleton() {
   const shimmerStyle: React.CSSProperties = {
-    background: "linear-gradient(90deg, oklch(0.90 0.02 88) 25%, oklch(0.95 0.01 88) 50%, oklch(0.90 0.02 88) 75%)",
+    background:
+      "linear-gradient(90deg, oklch(0.90 0.02 88) 25%, oklch(0.95 0.01 88) 50%, oklch(0.90 0.02 88) 75%)",
     backgroundSize: "200% 100%",
     animation: "ooo-shimmer 1.5s infinite",
   };
@@ -256,15 +278,76 @@ function CampaignSkeleton() {
     >
       <div style={{ height: "4px", ...shimmerStyle }} />
       <div style={{ padding: "24px" }}>
-        <div style={{ width: "90px", height: "22px", borderRadius: "999px", marginBottom: "16px", ...shimmerStyle }} />
-        <div style={{ width: "80%", height: "22px", borderRadius: "6px", marginBottom: "8px", ...shimmerStyle }} />
-        <div style={{ width: "55%", height: "22px", borderRadius: "6px", marginBottom: "16px", ...shimmerStyle }} />
-        <div style={{ width: "100%", height: "14px", borderRadius: "4px", marginBottom: "8px", ...shimmerStyle }} />
-        <div style={{ width: "85%", height: "14px", borderRadius: "4px", marginBottom: "20px", ...shimmerStyle }} />
-        <div style={{ height: "8px", borderRadius: "999px", marginBottom: "10px", ...shimmerStyle }} />
+        <div
+          style={{
+            width: "90px",
+            height: "22px",
+            borderRadius: "999px",
+            marginBottom: "16px",
+            ...shimmerStyle,
+          }}
+        />
+        <div
+          style={{
+            width: "80%",
+            height: "22px",
+            borderRadius: "6px",
+            marginBottom: "8px",
+            ...shimmerStyle,
+          }}
+        />
+        <div
+          style={{
+            width: "55%",
+            height: "22px",
+            borderRadius: "6px",
+            marginBottom: "16px",
+            ...shimmerStyle,
+          }}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "14px",
+            borderRadius: "4px",
+            marginBottom: "8px",
+            ...shimmerStyle,
+          }}
+        />
+        <div
+          style={{
+            width: "85%",
+            height: "14px",
+            borderRadius: "4px",
+            marginBottom: "20px",
+            ...shimmerStyle,
+          }}
+        />
+        <div
+          style={{
+            height: "8px",
+            borderRadius: "999px",
+            marginBottom: "10px",
+            ...shimmerStyle,
+          }}
+        />
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ width: "45%", height: "12px", borderRadius: "4px", ...shimmerStyle }} />
-          <div style={{ width: "25%", height: "12px", borderRadius: "4px", ...shimmerStyle }} />
+          <div
+            style={{
+              width: "45%",
+              height: "12px",
+              borderRadius: "4px",
+              ...shimmerStyle,
+            }}
+          />
+          <div
+            style={{
+              width: "25%",
+              height: "12px",
+              borderRadius: "4px",
+              ...shimmerStyle,
+            }}
+          />
         </div>
       </div>
     </div>
@@ -276,16 +359,25 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
   const colors = getCategoryColors(campaign.category);
-  const pct = campaign.goalAmount > 0
-    ? Math.min(100, (campaign.amountRaised / campaign.goalAmount) * 100)
-    : 0;
+  const pct =
+    campaign.goalAmount > 0
+      ? Math.min(100, (campaign.amountRaised / campaign.goalAmount) * 100)
+      : 0;
 
   const formatGBP = (n: number) =>
-    new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(n);
+    new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: "GBP",
+      maximumFractionDigits: 0,
+    }).format(n);
 
   const formatDate = (ts: bigint) => {
     try {
-      return new Date(Number(ts / 1_000_000n)).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      return new Date(Number(ts / 1_000_000n)).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
     } catch {
       return "";
     }
@@ -310,7 +402,8 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
         boxShadow: hovered
           ? "0 8px 32px oklch(0.38 0.12 155 / 0.12)"
           : "0 2px 12px oklch(0.18 0.01 200 / 0.06)",
-        transition: "box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease",
+        transition:
+          "box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease",
         transform: hovered ? "translateY(-3px)" : "translateY(0)",
         display: "flex",
         flexDirection: "column",
@@ -325,7 +418,14 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
       {/* Category accent bar */}
       <div style={{ height: "4px", background: colors.bar, flexShrink: 0 }} />
 
-      <div style={{ padding: "22px 24px 20px", display: "flex", flexDirection: "column", flex: 1 }}>
+      <div
+        style={{
+          padding: "22px 24px 20px",
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+        }}
+      >
         {/* Category badge */}
         <div style={{ marginBottom: "14px" }}>
           <span
@@ -443,11 +543,14 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
             marginBottom: "14px",
           }}
         >
-          {Number(campaign.contributors).toLocaleString()} contributor{Number(campaign.contributors) !== 1 ? "s" : ""}
+          {Number(campaign.contributors).toLocaleString()} contributor
+          {Number(campaign.contributors) !== 1 ? "s" : ""}
         </div>
 
         {/* Divider */}
-        <div style={{ height: "1px", background: T.border, marginBottom: "12px" }} />
+        <div
+          style={{ height: "1px", background: T.border, marginBottom: "12px" }}
+        />
 
         {/* Footer: organizer + end date */}
         <div
@@ -510,7 +613,10 @@ function CampaignCard({ campaign }: { campaign: Campaign }) {
 // ─── Stats summary bar ────────────────────────────────────────────────────────
 function StatsSummaryBar({ campaigns }: { campaigns: Campaign[] }) {
   const totalRaised = campaigns.reduce((sum, c) => sum + c.amountRaised, 0);
-  const totalContributors = campaigns.reduce((sum, c) => sum + Number(c.contributors), 0);
+  const totalContributors = campaigns.reduce(
+    (sum, c) => sum + Number(c.contributors),
+    0,
+  );
 
   const formatCompact = (n: number) =>
     new Intl.NumberFormat("en-GB", {
@@ -521,10 +627,16 @@ function StatsSummaryBar({ campaigns }: { campaigns: Campaign[] }) {
     }).format(n);
 
   const stats = [
-    { label: "Active Campaigns", value: campaigns.filter((c) => c.active).length.toString() },
+    {
+      label: "Active Campaigns",
+      value: campaigns.filter((c) => c.active).length.toString(),
+    },
     { label: "Total Raised", value: formatCompact(totalRaised) },
     { label: "Total Contributors", value: totalContributors.toLocaleString() },
-    { label: "Categories", value: new Set(campaigns.map((c) => c.category)).size.toString() },
+    {
+      label: "Categories",
+      value: new Set(campaigns.map((c) => c.category)).size.toString(),
+    },
   ];
 
   return (
@@ -655,7 +767,8 @@ export function CharitablePage() {
         {/* ── Page header ─────────────────────────────────────── */}
         <header
           style={{
-            background: "linear-gradient(160deg, oklch(0.94 0.04 155) 0%, oklch(0.97 0.02 88) 60%)",
+            background:
+              "linear-gradient(160deg, oklch(0.94 0.04 155) 0%, oklch(0.97 0.02 88) 60%)",
             borderBottom: `1px solid ${T.border}`,
             padding: "56px 24px 48px",
             textAlign: "center",
@@ -717,14 +830,21 @@ export function CharitablePage() {
                 margin: "0 auto",
               }}
             >
-              Every campaign here is powered by collective generosity — your contribution of cash, kind, or time helps bring these vital projects to life.
+              Every campaign here is powered by collective generosity — your
+              contribution of cash, kind, or time helps bring these vital
+              projects to life.
             </p>
           </div>
         </header>
 
         {/* ── Content container ────────────────────────────────── */}
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px 0" }}>
-
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "48px 24px 0",
+          }}
+        >
           {/* Stats bar */}
           {!isLoading && !error && campaigns.length > 0 && (
             <StatsSummaryBar campaigns={campaigns} />
@@ -769,7 +889,9 @@ export function CharitablePage() {
                     padding: "7px 16px",
                     borderRadius: "999px",
                     border: `1.5px solid ${isActive ? (catColors?.bar ?? T.green) : T.border}`,
-                    background: isActive ? (catColors?.bg ?? T.greenLight) : T.white,
+                    background: isActive
+                      ? (catColors?.bg ?? T.greenLight)
+                      : T.white,
                     color: isActive ? (catColors?.text ?? T.green) : T.muted,
                     fontFamily: "'Inter', system-ui, sans-serif",
                     fontSize: "0.82rem",
@@ -819,7 +941,8 @@ export function CharitablePage() {
                   color: T.muted,
                 }}
               >
-                {filteredCampaigns.length} campaign{filteredCampaigns.length !== 1 ? "s" : ""}
+                {filteredCampaigns.length} campaign
+                {filteredCampaigns.length !== 1 ? "s" : ""}
               </span>
             )}
           </div>
@@ -932,7 +1055,8 @@ export function CharitablePage() {
                     marginBottom: "20px",
                   }}
                 >
-                  Be the first to launch a {activeFilter.toLowerCase()} campaign with OOO Charitable.
+                  Be the first to launch a {activeFilter.toLowerCase()} campaign
+                  with OOO Charitable.
                 </p>
                 <button
                   type="button"

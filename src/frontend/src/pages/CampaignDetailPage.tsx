@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "@tanstack/react-router";
-import { useActor } from "../hooks/useActor";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import type { Campaign } from "../backend.d.ts";
 import { ContributionPanel } from "../components/ContributionPanel";
 import { FinFranFranPanel } from "../components/FinFranFranPanel";
+import { useActor } from "../hooks/useActor";
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -111,11 +111,40 @@ function DetailSkeleton() {
     >
       <div style={{ maxWidth: "840px", margin: "0 auto" }}>
         {/* Back button placeholder */}
-        <div style={{ width: "160px", height: "18px", marginBottom: "36px", ...shimmer }} />
+        <div
+          style={{
+            width: "160px",
+            height: "18px",
+            marginBottom: "36px",
+            ...shimmer,
+          }}
+        />
         {/* Badge + title */}
-        <div style={{ width: "90px", height: "24px", marginBottom: "16px", borderRadius: "999px", ...shimmer }} />
-        <div style={{ width: "70%", height: "40px", marginBottom: "12px", ...shimmer }} />
-        <div style={{ width: "50%", height: "40px", marginBottom: "36px", ...shimmer }} />
+        <div
+          style={{
+            width: "90px",
+            height: "24px",
+            marginBottom: "16px",
+            borderRadius: "999px",
+            ...shimmer,
+          }}
+        />
+        <div
+          style={{
+            width: "70%",
+            height: "40px",
+            marginBottom: "12px",
+            ...shimmer,
+          }}
+        />
+        <div
+          style={{
+            width: "50%",
+            height: "40px",
+            marginBottom: "36px",
+            ...shimmer,
+          }}
+        />
         {/* Stats bar */}
         <div
           style={{
@@ -127,14 +156,24 @@ function DetailSkeleton() {
             marginBottom: "28px",
           }}
         >
-          {["raised","goal","funded","contrib","days"].map((k) => (
-            <div key={k} style={{ height: "80px", ...shimmer, borderRadius: 0 }} />
+          {["raised", "goal", "funded", "contrib", "days"].map((k) => (
+            <div
+              key={k}
+              style={{ height: "80px", ...shimmer, borderRadius: 0 }}
+            />
           ))}
         </div>
         {/* Progress bar */}
-        <div style={{ height: "12px", borderRadius: "999px", marginBottom: "36px", ...shimmer }} />
+        <div
+          style={{
+            height: "12px",
+            borderRadius: "999px",
+            marginBottom: "36px",
+            ...shimmer,
+          }}
+        />
         {/* Description block */}
-        {(["line1","line2","line3","line4short"] as const).map((k) => (
+        {(["line1", "line2", "line3", "line4short"] as const).map((k) => (
           <div
             key={k}
             style={{
@@ -151,7 +190,11 @@ function DetailSkeleton() {
 }
 
 // ─── Stat cell ────────────────────────────────────────────────────────────────
-function StatCell({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function StatCell({
+  label,
+  value,
+  highlight,
+}: { label: string; value: string; highlight?: boolean }) {
   return (
     <div
       style={{
@@ -275,7 +318,8 @@ export function CampaignDetailPage() {
               marginBottom: "28px",
             }}
           >
-            We couldn't locate this campaign. It may have been removed or the link may be incorrect.
+            We couldn't locate this campaign. It may have been removed or the
+            link may be incorrect.
           </p>
           <button
             type="button"
@@ -364,8 +408,12 @@ export function CampaignDetailPage() {
                 opacity: 0.85,
                 transition: "opacity 0.15s",
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.85"; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = "1";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = "0.85";
+              }}
             >
               ← Back to Campaigns
             </button>
@@ -491,7 +539,8 @@ export function CampaignDetailPage() {
                 width: `${pct}%`,
                 borderRadius: "999px",
                 background: colors.bar,
-                animation: "ooo-progressFill 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+                animation:
+                  "ooo-progressFill 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards",
                 minWidth: pct > 0 ? "12px" : "0",
               }}
             />

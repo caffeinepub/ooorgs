@@ -1,7 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
-import { useActor } from "../hooks/useActor";
-import type { Campaign, FractionalizationSettings, UnitClaim } from "../backend.d.ts";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import type {
+  Campaign,
+  FractionalizationSettings,
+  UnitClaim,
+} from "../backend.d.ts";
+import { CollabActionsBoard } from "../components/CollabActionsBoard";
+import CoopProjectGrid from "../components/CoopProjectGrid";
+import {
+  MemberDirectoryCard,
+  SAMPLE_MEMBERS,
+} from "../components/MemberDirectoryCard";
+import { useActor } from "../hooks/useActor";
 
 // ─── Brand tokens ─────────────────────────────────────────────────────────────
 const T = {
@@ -63,8 +73,16 @@ const shimmerStyle: React.CSSProperties = {
 
 function PageSkeleton() {
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "48px 24px 0" }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))", gap: "28px" }}>
+    <div
+      style={{ maxWidth: "1100px", margin: "0 auto", padding: "48px 24px 0" }}
+    >
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(480px, 1fr))",
+          gap: "28px",
+        }}
+      >
         {(["skeleton-0", "skeleton-1", "skeleton-2"] as const).map((key) => (
           <div
             key={key}
@@ -78,9 +96,31 @@ function PageSkeleton() {
           >
             <div style={{ height: "5px", ...shimmerStyle, borderRadius: 0 }} />
             <div style={{ padding: "28px" }}>
-              <div style={{ width: "100px", height: "22px", borderRadius: "999px", marginBottom: "16px", ...shimmerStyle }} />
-              <div style={{ width: "75%", height: "26px", marginBottom: "8px", ...shimmerStyle }} />
-              <div style={{ width: "60%", height: "18px", marginBottom: "24px", ...shimmerStyle }} />
+              <div
+                style={{
+                  width: "100px",
+                  height: "22px",
+                  borderRadius: "999px",
+                  marginBottom: "16px",
+                  ...shimmerStyle,
+                }}
+              />
+              <div
+                style={{
+                  width: "75%",
+                  height: "26px",
+                  marginBottom: "8px",
+                  ...shimmerStyle,
+                }}
+              />
+              <div
+                style={{
+                  width: "60%",
+                  height: "18px",
+                  marginBottom: "24px",
+                  ...shimmerStyle,
+                }}
+              />
               <div
                 style={{
                   display: "grid",
@@ -92,7 +132,10 @@ function PageSkeleton() {
                 }}
               >
                 {(["s0", "s1", "s2", "s3"] as const).map((k) => (
-                  <div key={k} style={{ height: "64px", ...shimmerStyle, borderRadius: 0 }} />
+                  <div
+                    key={k}
+                    style={{ height: "64px", ...shimmerStyle, borderRadius: 0 }}
+                  />
                 ))}
               </div>
               <div style={{ height: "160px", ...shimmerStyle }} />
@@ -117,7 +160,10 @@ function UnitGrid({ totalUnits, unitsSold, pendingUnits = 0 }: UnitGridProps) {
   const claimedPercent = total > 0 ? (sold / total) * GRID_SIZE : 0;
   const pendingPercent = total > 0 ? (pendingUnits / total) * GRID_SIZE : 0;
   const claimedCells = Math.round(claimedPercent);
-  const pendingCells = Math.min(Math.round(pendingPercent), GRID_SIZE - claimedCells);
+  const pendingCells = Math.min(
+    Math.round(pendingPercent),
+    GRID_SIZE - claimedCells,
+  );
 
   return (
     <div>
@@ -132,24 +178,30 @@ function UnitGrid({ totalUnits, unitsSold, pendingUnits = 0 }: UnitGridProps) {
           border: `1px solid ${T.border}`,
         }}
       >
-        {Array.from({ length: GRID_SIZE }, (_, i) => `grid-cell-${i}`).map((cellKey, i) => {
-          const isClaimed = i < claimedCells;
-          const isPending = !isClaimed && i < claimedCells + pendingCells;
-          return (
-            <div
-              key={cellKey}
-              style={{
-                aspectRatio: "1",
-                borderRadius: "2px",
-                border: `1px solid ${
-                  isClaimed ? T.greenCell : isPending ? T.goldMid : T.border
-                }`,
-                background: isClaimed ? T.greenCell : isPending ? T.goldLight : "oklch(0.94 0.01 88)",
-                transition: "background 0.2s, border-color 0.2s",
-              }}
-            />
-          );
-        })}
+        {Array.from({ length: GRID_SIZE }, (_, i) => `grid-cell-${i}`).map(
+          (cellKey, i) => {
+            const isClaimed = i < claimedCells;
+            const isPending = !isClaimed && i < claimedCells + pendingCells;
+            return (
+              <div
+                key={cellKey}
+                style={{
+                  aspectRatio: "1",
+                  borderRadius: "2px",
+                  border: `1px solid ${
+                    isClaimed ? T.greenCell : isPending ? T.goldMid : T.border
+                  }`,
+                  background: isClaimed
+                    ? T.greenCell
+                    : isPending
+                      ? T.goldLight
+                      : "oklch(0.94 0.01 88)",
+                  transition: "background 0.2s, border-color 0.2s",
+                }}
+              />
+            );
+          },
+        )}
       </div>
       <div
         style={{
@@ -163,11 +215,24 @@ function UnitGrid({ totalUnits, unitsSold, pendingUnits = 0 }: UnitGridProps) {
         {[
           { color: T.greenCell, border: T.greenCell, label: "Claimed" },
           ...(pendingCells > 0
-            ? [{ color: T.goldLight, border: T.goldMid, label: "Your Selection" }]
+            ? [
+                {
+                  color: T.goldLight,
+                  border: T.goldMid,
+                  label: "Your Selection",
+                },
+              ]
             : []),
-          { color: "oklch(0.94 0.01 88)", border: T.border, label: "Available" },
+          {
+            color: "oklch(0.94 0.01 88)",
+            border: T.border,
+            label: "Available",
+          },
         ].map((item) => (
-          <div key={item.label} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <div
+            key={item.label}
+            style={{ display: "flex", alignItems: "center", gap: "5px" }}
+          >
             <div
               style={{
                 width: "12px",
@@ -209,7 +274,14 @@ function RecentClaims({ claims }: { claims: UnitClaim[] }) {
           border: `1px solid ${T.border}`,
         }}
       >
-        <p style={{ fontFamily: FONT_BODY, fontSize: "0.82rem", color: T.muted, fontStyle: "italic" }}>
+        <p
+          style={{
+            fontFamily: FONT_BODY,
+            fontSize: "0.82rem",
+            color: T.muted,
+            fontStyle: "italic",
+          }}
+        >
           No units claimed yet — be the first co-owner!
         </p>
       </div>
@@ -217,7 +289,13 @@ function RecentClaims({ claims }: { claims: UnitClaim[] }) {
   }
 
   return (
-    <div style={{ border: `1px solid ${T.border}`, borderRadius: "10px", overflow: "hidden" }}>
+    <div
+      style={{
+        border: `1px solid ${T.border}`,
+        borderRadius: "10px",
+        overflow: "hidden",
+      }}
+    >
       {claims.slice(0, 5).map((claim, i) => (
         <div
           key={`${claim.claimantName}-${String(claim.timestamp)}-${i}`}
@@ -227,7 +305,10 @@ function RecentClaims({ claims }: { claims: UnitClaim[] }) {
             justifyContent: "space-between",
             padding: "10px 14px",
             background: i % 2 === 0 ? T.white : T.cream,
-            borderBottom: i < Math.min(claims.length, 5) - 1 ? `1px solid ${T.border}` : "none",
+            borderBottom:
+              i < Math.min(claims.length, 5) - 1
+                ? `1px solid ${T.border}`
+                : "none",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -251,17 +332,47 @@ function RecentClaims({ claims }: { claims: UnitClaim[] }) {
               {claim.claimantName.slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <p style={{ fontFamily: FONT_BODY, fontSize: "0.85rem", fontWeight: 600, color: T.charcoal, marginBottom: "1px" }}>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  color: T.charcoal,
+                  marginBottom: "1px",
+                }}
+              >
                 {claim.claimantName}
               </p>
-              <p style={{ fontFamily: FONT_BODY, fontSize: "0.7rem", color: T.muted }}>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.7rem",
+                  color: T.muted,
+                }}
+              >
                 {formatTimestamp(claim.timestamp)}
               </p>
             </div>
           </div>
-          <div style={{ fontFamily: FONT_DISPLAY, fontSize: "0.95rem", fontWeight: 700, color: T.green, textAlign: "right" }}>
+          <div
+            style={{
+              fontFamily: FONT_DISPLAY,
+              fontSize: "0.95rem",
+              fontWeight: 700,
+              color: T.green,
+              textAlign: "right",
+            }}
+          >
             {Number(claim.unitsClaimed).toLocaleString()}
-            <span style={{ fontFamily: FONT_BODY, fontSize: "0.67rem", fontWeight: 500, color: T.muted, marginLeft: "4px" }}>
+            <span
+              style={{
+                fontFamily: FONT_BODY,
+                fontSize: "0.67rem",
+                fontWeight: 500,
+                color: T.muted,
+                marginLeft: "4px",
+              }}
+            >
               units
             </span>
           </div>
@@ -277,7 +388,10 @@ interface ActivatePanelProps {
   onActivated: () => void;
 }
 
-function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps) {
+function ActivateFinFranFranPanel({
+  campaign,
+  onActivated,
+}: ActivatePanelProps) {
   const { actor } = useActor();
   const [totalUnits, setTotalUnits] = useState("1000");
   const [pricePerUnit, setPricePerUnit] = useState("100");
@@ -289,8 +403,8 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
   const handleActivate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!actor) return;
-    const units = parseInt(totalUnits, 10);
-    const price = parseFloat(pricePerUnit);
+    const units = Number.parseInt(totalUnits, 10);
+    const price = Number.parseFloat(pricePerUnit);
     if (!units || units < 1 || !price || price <= 0) {
       setError("Please enter valid units (≥1) and price (>0).");
       return;
@@ -298,7 +412,11 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
     setSubmitting(true);
     setError(null);
     try {
-      const success = await actor.setFractionalizationSettings(campaign.id, BigInt(units), price);
+      const success = await actor.setFractionalizationSettings(
+        campaign.id,
+        BigInt(units),
+        price,
+      );
       if (success) {
         toast.success(`FinFranFran™ activated for "${campaign.title}"! 🌿`);
         onActivated();
@@ -324,7 +442,12 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
       }}
     >
       {/* Top accent */}
-      <div style={{ height: "4px", background: `linear-gradient(90deg, ${T.gold}, oklch(0.82 0.12 88))` }} />
+      <div
+        style={{
+          height: "4px",
+          background: `linear-gradient(90deg, ${T.gold}, oklch(0.82 0.12 88))`,
+        }}
+      />
 
       <div style={{ padding: "28px" }}>
         {/* Campaign info */}
@@ -405,7 +528,13 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
               >
                 Activate FinFranFran™
               </p>
-              <p style={{ fontFamily: FONT_BODY, fontSize: "0.75rem", color: T.muted }}>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.75rem",
+                  color: T.muted,
+                }}
+              >
                 Enable fractional co-ownership for this campaign
               </p>
             </div>
@@ -454,8 +583,12 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
                     outline: "none",
                     boxSizing: "border-box",
                   }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = T.gold; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = T.goldBorder; }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = T.gold;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = T.goldBorder;
+                  }}
                 />
               </div>
               <div>
@@ -493,8 +626,12 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
                     outline: "none",
                     boxSizing: "border-box",
                   }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = T.gold; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = T.goldBorder; }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = T.gold;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = T.goldBorder;
+                  }}
                 />
               </div>
             </div>
@@ -513,10 +650,23 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
                   marginBottom: "14px",
                 }}
               >
-                <span style={{ fontFamily: FONT_BODY, fontSize: "0.78rem", color: T.muted }}>
+                <span
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.78rem",
+                    color: T.muted,
+                  }}
+                >
                   Total campaign value
                 </span>
-                <span style={{ fontFamily: FONT_DISPLAY, fontSize: "1.1rem", fontWeight: 700, color: T.charcoal }}>
+                <span
+                  style={{
+                    fontFamily: FONT_DISPLAY,
+                    fontSize: "1.1rem",
+                    fontWeight: 700,
+                    color: T.charcoal,
+                  }}
+                >
                   {formatCurrency(totalValue)}
                 </span>
               </div>
@@ -559,9 +709,12 @@ function ActivateFinFranFranPanel({ campaign, onActivated }: ActivatePanelProps)
                 gap: "8px",
               }}
               onMouseEnter={(e) => {
-                if (!submitting) e.currentTarget.style.transform = "translateY(-1px)";
+                if (!submitting)
+                  e.currentTarget.style.transform = "translateY(-1px)";
               }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               {submitting ? (
                 <>
@@ -596,7 +749,11 @@ interface CollectiveProjectCardProps {
   onRefresh: () => void;
 }
 
-function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProjectCardProps) {
+function CollectiveProjectCard({
+  campaign,
+  settings,
+  onRefresh,
+}: CollectiveProjectCardProps) {
   const { actor } = useActor();
   const [claims, setClaims] = useState<UnitClaim[]>([]);
   const [loadingClaims, setLoadingClaims] = useState(true);
@@ -642,10 +799,12 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
       const success = await actor.claimUnits(
         campaign.id,
         claimantName.trim() || "Anonymous",
-        BigInt(selectedUnits)
+        BigInt(selectedUnits),
       );
       if (success) {
-        toast.success(`${selectedUnits} unit${selectedUnits !== 1 ? "s" : ""} claimed! 🎉`);
+        toast.success(
+          `${selectedUnits} unit${selectedUnits !== 1 ? "s" : ""} claimed! 🎉`,
+        );
         setClaimantName("");
         setSelectedUnits(5);
         await Promise.all([loadClaims(), onRefresh()]);
@@ -673,12 +832,34 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
       }}
     >
       {/* Top accent bar */}
-      <div style={{ height: "5px", background: `linear-gradient(90deg, ${T.green}, ${T.greenCell})` }} />
+      <div
+        style={{
+          height: "5px",
+          background: `linear-gradient(90deg, ${T.green}, ${T.greenCell})`,
+        }}
+      />
 
-      <div style={{ padding: "28px", flex: 1, display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div
+        style={{
+          padding: "28px",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+        }}
+      >
         {/* Campaign header */}
         <div>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "12px", flexWrap: "wrap", marginBottom: "10px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              gap: "12px",
+              flexWrap: "wrap",
+              marginBottom: "10px",
+            }}
+          >
             <span
               style={{
                 fontFamily: FONT_BODY,
@@ -688,7 +869,7 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                 textTransform: "uppercase",
                 color: T.green,
                 background: T.greenLight,
-                border: `1px solid oklch(0.72 0.08 155)`,
+                border: "1px solid oklch(0.72 0.08 155)",
                 borderRadius: "999px",
                 padding: "3px 10px",
               }}
@@ -706,7 +887,9 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                 padding: "3px 10px",
               }}
             >
-              {available === 0 ? "Fully Claimed" : `${available.toLocaleString()} units left`}
+              {available === 0
+                ? "Fully Claimed"
+                : `${available.toLocaleString()} units left`}
             </span>
           </div>
           <h3
@@ -749,10 +932,22 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
           }}
         >
           {[
-            { label: "Total Units", value: totalUnitsNum.toLocaleString(), accent: false },
-            { label: "Unit Price", value: formatCurrency(settings.pricePerUnit), accent: false },
+            {
+              label: "Total Units",
+              value: totalUnitsNum.toLocaleString(),
+              accent: false,
+            },
+            {
+              label: "Unit Price",
+              value: formatCurrency(settings.pricePerUnit),
+              accent: false,
+            },
             { label: "Claimed", value: soldNum.toLocaleString(), accent: true },
-            { label: "Available", value: available.toLocaleString(), accent: false },
+            {
+              label: "Available",
+              value: available.toLocaleString(),
+              accent: false,
+            },
           ].map((stat, i) => (
             <div
               key={stat.label}
@@ -822,7 +1017,10 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
             }}
           >
             <span>{Math.round(pct)}% claimed</span>
-            <span>Total value: {formatCurrency(totalUnitsNum * settings.pricePerUnit)}</span>
+            <span>
+              Total value:{" "}
+              {formatCurrency(totalUnitsNum * settings.pricePerUnit)}
+            </span>
           </div>
         </div>
 
@@ -892,14 +1090,25 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                       <button
                         key={qty}
                         type="button"
-                        onClick={() => { setSelectedUnits(qty); setFormError(null); }}
+                        onClick={() => {
+                          setSelectedUnits(qty);
+                          setFormError(null);
+                        }}
                         disabled={isOver}
                         style={{
                           padding: "7px 14px",
                           borderRadius: "8px",
                           border: `1.5px solid ${isSelected ? T.green : isOver ? T.border : T.inputBorder}`,
-                          background: isSelected ? T.greenLight : isOver ? "oklch(0.93 0.01 88)" : T.white,
-                          color: isSelected ? T.green : isOver ? T.border : T.charcoal,
+                          background: isSelected
+                            ? T.greenLight
+                            : isOver
+                              ? "oklch(0.93 0.01 88)"
+                              : T.white,
+                          color: isSelected
+                            ? T.green
+                            : isOver
+                              ? T.border
+                              : T.charcoal,
                           fontFamily: FONT_BODY,
                           fontSize: "0.88rem",
                           fontWeight: isSelected ? 700 : 500,
@@ -918,8 +1127,8 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                     max={available}
                     value={selectedUnits}
                     onChange={(e) => {
-                      const v = parseInt(e.target.value, 10);
-                      if (!isNaN(v) && v >= 1) {
+                      const v = Number.parseInt(e.target.value, 10);
+                      if (!Number.isNaN(v) && v >= 1) {
                         setSelectedUnits(v);
                         setFormError(null);
                       }
@@ -936,8 +1145,14 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                       outline: "none",
                       boxSizing: "border-box",
                     }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = T.green; }}
-                    onBlur={(e) => { e.currentTarget.style.borderColor = isOverLimit ? T.errorText : T.inputBorder; }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = T.green;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = isOverLimit
+                        ? T.errorText
+                        : T.inputBorder;
+                    }}
                   />
                 </div>
               </div>
@@ -957,10 +1172,24 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                   gap: "8px",
                 }}
               >
-                <span style={{ fontFamily: FONT_BODY, fontSize: "0.8rem", color: T.muted }}>
-                  {selectedUnits.toLocaleString()} × {formatCurrency(settings.pricePerUnit)}
+                <span
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.8rem",
+                    color: T.muted,
+                  }}
+                >
+                  {selectedUnits.toLocaleString()} ×{" "}
+                  {formatCurrency(settings.pricePerUnit)}
                 </span>
-                <span style={{ fontFamily: FONT_DISPLAY, fontSize: "1.2rem", fontWeight: 700, color: T.charcoal }}>
+                <span
+                  style={{
+                    fontFamily: FONT_DISPLAY,
+                    fontSize: "1.2rem",
+                    fontWeight: 700,
+                    color: T.charcoal,
+                  }}
+                >
                   {formatCurrency(totalCost)}
                 </span>
               </div>
@@ -1000,8 +1229,12 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                     outline: "none",
                     boxSizing: "border-box",
                   }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = T.green; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = T.inputBorder; }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = T.green;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = T.inputBorder;
+                  }}
                 />
               </div>
 
@@ -1029,7 +1262,10 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                   padding: "12px 20px",
                   borderRadius: "9px",
                   border: "none",
-                  background: submitting || isOverLimit ? "oklch(0.65 0.06 155)" : T.green,
+                  background:
+                    submitting || isOverLimit
+                      ? "oklch(0.65 0.06 155)"
+                      : T.green,
                   color: T.white,
                   fontFamily: FONT_BODY,
                   fontSize: "0.9rem",
@@ -1042,9 +1278,12 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
                   gap: "8px",
                 }}
                 onMouseEnter={(e) => {
-                  if (!submitting && !isOverLimit) e.currentTarget.style.transform = "translateY(-1px)";
+                  if (!submitting && !isOverLimit)
+                    e.currentTarget.style.transform = "translateY(-1px)";
                 }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
               >
                 {submitting ? (
                   <>
@@ -1077,7 +1316,7 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
             style={{
               padding: "16px",
               background: T.successBg,
-              border: `1px solid oklch(0.72 0.08 155)`,
+              border: "1px solid oklch(0.72 0.08 155)",
               borderRadius: "12px",
               textAlign: "center",
             }}
@@ -1093,7 +1332,13 @@ function CollectiveProjectCard({ campaign, settings, onRefresh }: CollectiveProj
             >
               🎉 All Units Claimed
             </p>
-            <p style={{ fontFamily: FONT_BODY, fontSize: "0.8rem", color: T.muted }}>
+            <p
+              style={{
+                fontFamily: FONT_BODY,
+                fontSize: "0.8rem",
+                color: T.muted,
+              }}
+            >
               This collective project is fully co-owned!
             </p>
           </div>
@@ -1130,7 +1375,9 @@ interface CommunityStatsProps {
 }
 
 function CommunityStatsBar({ campaigns, settingsMap }: CommunityStatsProps) {
-  const activeCampaigns = campaigns.filter((c) => settingsMap.has(String(c.id)));
+  const activeCampaigns = campaigns.filter((c) =>
+    settingsMap.has(String(c.id)),
+  );
   const totalUnitsClaimed = activeCampaigns.reduce((sum, c) => {
     const s = settingsMap.get(String(c.id));
     return sum + (s ? Number(s.unitsSold) : 0);
@@ -1208,7 +1455,9 @@ function CommunityStatsBar({ campaigns, settingsMap }: CommunityStatsProps) {
 export function CooperativesPage() {
   const { actor, isFetching: actorLoading } = useActor();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [settingsMap, setSettingsMap] = useState<Map<string, FractionalizationSettings>>(new Map());
+  const [settingsMap, setSettingsMap] = useState<
+    Map<string, FractionalizationSettings>
+  >(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -1241,7 +1490,9 @@ export function CooperativesPage() {
   }, [actor, actorLoading, loadData]);
 
   const withSettings = campaigns.filter((c) => settingsMap.has(String(c.id)));
-  const withoutSettings = campaigns.filter((c) => !settingsMap.has(String(c.id)));
+  const withoutSettings = campaigns.filter(
+    (c) => !settingsMap.has(String(c.id)),
+  );
   const isLoading = loading || actorLoading;
 
   return (
@@ -1276,7 +1527,8 @@ export function CooperativesPage() {
         {/* ── Page hero ─────────────────────────────────────── */}
         <header
           style={{
-            background: "linear-gradient(160deg, oklch(0.94 0.04 155) 0%, oklch(0.97 0.02 88) 65%)",
+            background:
+              "linear-gradient(160deg, oklch(0.94 0.04 155) 0%, oklch(0.97 0.02 88) 65%)",
             borderBottom: `1px solid ${T.border}`,
             padding: "56px 24px 48px",
             textAlign: "center",
@@ -1338,13 +1590,24 @@ export function CooperativesPage() {
                 margin: "0 auto",
               }}
             >
-              We take a collaborative approach as NewerWaysNow — spreading ownership, opportunity, and participation beyond traditional borders. Through FinFranFran™ fractional units, everyone can co-own a share of the projects that matter most.
+              We take a collaborative approach as NewerWaysNow — spreading
+              ownership, opportunity, and participation beyond traditional
+              borders. Through FinFranFran™ fractional units, everyone can
+              co-own a share of the projects that matter most.
             </p>
           </div>
         </header>
 
         {/* ── Content container ─────────────────────────────── */}
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "48px 24px 0" }}>
+        <div
+          style={{
+            maxWidth: "1100px",
+            margin: "0 auto",
+            padding: "48px 24px 0",
+          }}
+        >
+          {/* Collective Projects grid */}
+          <CoopProjectGrid />
 
           {/* FinFranFran explainer card */}
           <div
@@ -1372,13 +1635,21 @@ export function CooperativesPage() {
                 justifyContent: "center",
                 fontSize: "1.6rem",
                 flexShrink: 0,
-                boxShadow: `0 4px 16px oklch(0.38 0.12 155 / 0.25)`,
+                boxShadow: "0 4px 16px oklch(0.38 0.12 155 / 0.25)",
               }}
             >
               🌿
             </div>
             <div style={{ flex: 1, minWidth: "260px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "8px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  marginBottom: "8px",
+                }}
+              >
                 <h2
                   style={{
                     fontFamily: FONT_DISPLAY,
@@ -1398,7 +1669,7 @@ export function CooperativesPage() {
                     textTransform: "uppercase",
                     color: T.green,
                     background: T.greenLight,
-                    border: `1px solid oklch(0.72 0.08 155)`,
+                    border: "1px solid oklch(0.72 0.08 155)",
                     borderRadius: "999px",
                     padding: "3px 10px",
                   }}
@@ -1415,9 +1686,21 @@ export function CooperativesPage() {
                   maxWidth: "620px",
                 }}
               >
-                FinFranFran™ divides large collective projects into affordable participation units, spreading cost-effective ownership across all our players — within and beyond traditional borders of business and nation building. You don't need to fund an entire project alone. Claim your fraction, own your share, and together we build what none of us could alone.
+                FinFranFran™ divides large collective projects into affordable
+                participation units, spreading cost-effective ownership across
+                all our players — within and beyond traditional borders of
+                business and nation building. You don't need to fund an entire
+                project alone. Claim your fraction, own your share, and together
+                we build what none of us could alone.
               </p>
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "14px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  flexWrap: "wrap",
+                  marginTop: "14px",
+                }}
+              >
                 {[
                   "Fractional ownership",
                   "Cost-effective for everyone",
@@ -1434,7 +1717,7 @@ export function CooperativesPage() {
                       background: T.greenLight,
                       borderRadius: "6px",
                       padding: "4px 12px",
-                      border: `1px solid oklch(0.82 0.06 155)`,
+                      border: "1px solid oklch(0.82 0.06 155)",
                     }}
                   >
                     ✓ {point}
@@ -1446,7 +1729,10 @@ export function CooperativesPage() {
 
           {/* Stats bar */}
           {!isLoading && !error && campaigns.length > 0 && (
-            <CommunityStatsBar campaigns={campaigns} settingsMap={settingsMap} />
+            <CommunityStatsBar
+              campaigns={campaigns}
+              settingsMap={settingsMap}
+            />
           )}
 
           {/* Error state */}
@@ -1454,14 +1740,21 @@ export function CooperativesPage() {
             <div
               style={{
                 background: T.errorBg,
-                border: `1px solid oklch(0.85 0.06 15)`,
+                border: "1px solid oklch(0.85 0.06 15)",
                 borderRadius: "12px",
                 padding: "32px",
                 textAlign: "center",
                 marginBottom: "32px",
               }}
             >
-              <p style={{ fontFamily: FONT_BODY, fontSize: "0.9rem", color: T.errorText, marginBottom: "16px" }}>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.9rem",
+                  color: T.errorText,
+                  marginBottom: "16px",
+                }}
+              >
                 {error}
               </p>
               <button
@@ -1520,8 +1813,16 @@ export function CooperativesPage() {
               >
                 No collective projects yet
               </h3>
-              <p style={{ fontFamily: FONT_BODY, fontSize: "0.9rem", color: T.muted, lineHeight: 1.7 }}>
-                Visit the Charitable section to view campaigns, then return here to activate FinFranFran™ ownership.
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: "0.9rem",
+                  color: T.muted,
+                  lineHeight: 1.7,
+                }}
+              >
+                Visit the Charitable section to view campaigns, then return here
+                to activate FinFranFran™ ownership.
               </p>
             </div>
           )}
@@ -1541,7 +1842,13 @@ export function CooperativesPage() {
                 >
                   Active Collective Projects
                 </h2>
-                <p style={{ fontFamily: FONT_BODY, fontSize: "0.88rem", color: T.muted }}>
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.88rem",
+                    color: T.muted,
+                  }}
+                >
                   Claim units to become a fractional co-owner of these campaigns
                 </p>
               </div>
@@ -1588,8 +1895,15 @@ export function CooperativesPage() {
                 >
                   Ready to Activate
                 </h2>
-                <p style={{ fontFamily: FONT_BODY, fontSize: "0.88rem", color: T.muted }}>
-                  These campaigns can be enabled for FinFranFran™ fractional co-ownership
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: "0.88rem",
+                    color: T.muted,
+                  }}
+                >
+                  These campaigns can be enabled for FinFranFran™ fractional
+                  co-ownership
                 </p>
               </div>
               <div
@@ -1603,7 +1917,10 @@ export function CooperativesPage() {
                   <div
                     key={String(campaign.id)}
                     className="coop-card-enter"
-                    style={{ animationDelay: `${(withSettings.length + i) * 80}ms`, opacity: 0 }}
+                    style={{
+                      animationDelay: `${(withSettings.length + i) * 80}ms`,
+                      opacity: 0,
+                    }}
                   >
                     <ActivateFinFranFranPanel
                       campaign={campaign}
@@ -1614,6 +1931,57 @@ export function CooperativesPage() {
               </div>
             </section>
           )}
+        </div>
+
+        {/* ── Member Directory ───────────────────────────────────────────── */}
+        <div
+          data-ocid="member_directory.section"
+          style={{
+            padding: "2.5rem 2rem",
+            maxWidth: "1200px",
+            margin: "0 auto",
+            width: "100%",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "var(--font-display, 'Playfair Display', serif)",
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              color: "oklch(var(--foreground))",
+              marginBottom: "1.25rem",
+            }}
+          >
+            Member Directory
+          </h2>
+          <div
+            data-ocid="member_directory.list"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: "1rem",
+            }}
+          >
+            {SAMPLE_MEMBERS.map((member, idx) => (
+              <MemberDirectoryCard
+                key={member.id}
+                member={member}
+                index={idx + 1}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Collaborative Actions Board ────────────────────────────────── */}
+        <div
+          style={{
+            padding: "0 2rem 3rem",
+            maxWidth: "1200px",
+            margin: "0 auto",
+            width: "100%",
+          }}
+        >
+          <CollabActionsBoard />
         </div>
       </main>
     </>

@@ -1,4 +1,4 @@
-import { Megaphone, DollarSign, Users, Building2 } from "lucide-react";
+import { Building2, DollarSign, Megaphone, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
