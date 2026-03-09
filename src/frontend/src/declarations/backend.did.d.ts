@@ -68,6 +68,19 @@ export interface IncomeEntry {
   'category' : string,
   'amount' : number,
 }
+export interface Proposal {
+  'id' : bigint,
+  'status' : string,
+  'title' : string,
+  'votesAgainst' : bigint,
+  'votesFor' : bigint,
+  'createdAt' : Time,
+  'description' : string,
+  'votesAbstain' : bigint,
+  'closingDate' : string,
+  'category' : string,
+  'proposedBy' : string,
+}
 export type Time = bigint;
 export interface UnitClaim {
   'claimantName' : string,
@@ -111,6 +124,10 @@ export interface _SERVICE {
     ],
     Campaign
   >,
+  'createProposal' : ActorMethod<
+    [string, string, string, string, string],
+    Proposal
+  >,
   'getActiveCampaigns' : ActorMethod<[], Array<Campaign>>,
   'getAllExpenseEntries' : ActorMethod<[], Array<ExpenseEntry>>,
   'getAllFractionalizationSettings' : ActorMethod<
@@ -118,6 +135,7 @@ export interface _SERVICE {
     Array<[bigint, FractionalizationSettings]>
   >,
   'getAllIncomeEntries' : ActorMethod<[], Array<IncomeEntry>>,
+  'getAllProposals' : ActorMethod<[], Array<Proposal>>,
   'getBudgetTargets' : ActorMethod<[], Array<[string, number]>>,
   'getCampaign' : ActorMethod<[bigint], [] | [Campaign]>,
   'getCampaignsByCategory' : ActorMethod<[string], Array<Campaign>>,
@@ -142,6 +160,7 @@ export interface _SERVICE {
     [bigint, bigint, number],
     boolean
   >,
+  'voteOnProposal' : ActorMethod<[bigint, string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

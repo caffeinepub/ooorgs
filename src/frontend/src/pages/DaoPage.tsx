@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Scale } from "lucide-react";
+import { ArrowLeft, FileText, Scale, Shield, Users } from "lucide-react";
+import { ProposalGrid } from "../components/ProposalGrid";
 
 const OOO_GREEN = "oklch(0.38 0.12 155)";
 const OOO_GOLD = "oklch(0.72 0.14 72)";
@@ -8,188 +9,226 @@ const OOO_CHARCOAL = "oklch(0.18 0.01 200)";
 export function DaoPage() {
   return (
     <main
+      data-ocid="dao.page"
       style={{
         minHeight: "calc(100vh - 64px)",
         background: "oklch(0.97 0.02 88)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "64px 24px",
       }}
     >
-      <div
+      {/* Page header */}
+      <header
+        data-ocid="dao.section"
         style={{
-          maxWidth: "560px",
-          width: "100%",
-          textAlign: "center",
+          borderBottom: "1px solid oklch(0.88 0.03 88)",
+          background: "#fff",
+          padding: "40px 24px 48px",
         }}
       >
-        {/* Back link */}
-        <Link
-          to="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            color: OOO_CHARCOAL,
-            textDecoration: "none",
-            opacity: 0.6,
-            marginBottom: "48px",
-            transition: "opacity 0.15s ease",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.opacity = "1";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.opacity = "0.6";
-          }}
-        >
-          <ArrowLeft size={15} />
-          Back to Home
-        </Link>
-
-        {/* Icon */}
         <div
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "80px",
-            height: "80px",
-            borderRadius: "20px",
-            background: "oklch(0.72 0.14 72 / 0.08)",
-            color: OOO_GOLD,
-            marginBottom: "28px",
-            border: "1px solid oklch(0.72 0.14 72 / 0.15)",
+            maxWidth: "1200px",
+            margin: "0 auto",
           }}
         >
-          <Scale size={36} strokeWidth={1.5} />
-        </div>
-
-        {/* Badge */}
-        <div style={{ marginBottom: "16px" }}>
-          <span
+          {/* Back link */}
+          <Link
+            to="/"
+            data-ocid="dao.link"
             style={{
-              display: "inline-block",
-              padding: "5px 16px",
-              borderRadius: "999px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
               fontFamily: "'Inter', system-ui, sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              background: "oklch(0.72 0.14 72 / 0.1)",
-              color: OOO_GOLD,
-              border: "1px solid oklch(0.72 0.14 72 / 0.2)",
+              fontSize: "0.82rem",
+              fontWeight: 500,
+              color: OOO_CHARCOAL,
+              textDecoration: "none",
+              opacity: 0.5,
+              marginBottom: "32px",
+              transition: "opacity 0.15s ease",
+              letterSpacing: "0.01em",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.opacity = "1";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.opacity = "0.5";
             }}
           >
-            Coming in Phase 7
-          </span>
-        </div>
+            <ArrowLeft size={14} strokeWidth={2} />
+            Back to Home
+          </Link>
 
-        {/* Heading */}
-        <h1
-          style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontSize: "clamp(2rem, 5vw, 3rem)",
-            fontWeight: 700,
-            color: OOO_GREEN,
-            lineHeight: 1.1,
-            marginBottom: "12px",
-          }}
-        >
-          OOO DAO
-        </h1>
-
-        {/* Tagline */}
-        <p
-          style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
-            fontStyle: "italic",
-            fontSize: "1.125rem",
-            color: OOO_GOLD,
-            marginBottom: "20px",
-          }}
-        >
-          Governance and sovereignty
-        </p>
-
-        {/* Description */}
-        <p
-          style={{
-            fontFamily: "'Inter', system-ui, sans-serif",
-            fontSize: "1rem",
-            color: OOO_CHARCOAL,
-            opacity: 0.7,
-            lineHeight: 1.7,
-            marginBottom: "40px",
-          }}
-        >
-          Phase 7 will unlock proposal creation, live voting, a passed
-          resolutions archive, and sovereignty services — giving every member a
-          meaningful voice in how OOOrgs moves forward.
-        </p>
-
-        {/* Divider */}
-        <div
-          style={{
-            height: "1px",
-            background:
-              "linear-gradient(to right, transparent, oklch(0.88 0.03 88), transparent)",
-            marginBottom: "32px",
-          }}
-        />
-
-        {/* What's coming */}
-        <ul
-          style={{
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            textAlign: "left",
-          }}
-        >
-          {[
-            "Proposal creation and management for all members",
-            "Live voting: For, Against, and Abstain tallies",
-            "Passed resolutions archive for full transparency",
-            "Sovereignty services and DAO configuration panel",
-          ].map((item) => (
-            <li
-              key={item}
+          {/* Header layout: icon + text */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "28px",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* Icon box */}
+            <div
               style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "10px",
-                fontFamily: "'Inter', system-ui, sans-serif",
-                fontSize: "0.9rem",
-                color: OOO_CHARCOAL,
-                opacity: 0.75,
-                lineHeight: 1.5,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "72px",
+                height: "72px",
+                borderRadius: "18px",
+                background: "oklch(0.72 0.14 72 / 0.08)",
+                color: OOO_GOLD,
+                border: "1px solid oklch(0.72 0.14 72 / 0.18)",
+                flexShrink: 0,
               }}
             >
-              <span
+              <Scale size={32} strokeWidth={1.5} />
+            </div>
+
+            {/* Title + tagline + description */}
+            <div style={{ flex: 1, minWidth: "220px" }}>
+              <h1
                 style={{
-                  display: "inline-block",
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: OOO_GOLD,
-                  marginTop: "7px",
-                  flexShrink: 0,
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontSize: "clamp(2rem, 4vw, 2.75rem)",
+                  fontWeight: 700,
+                  color: OOO_GREEN,
+                  lineHeight: 1.1,
+                  marginBottom: "8px",
+                  margin: "0 0 8px 0",
                 }}
-              />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
+              >
+                OOO DAO
+              </h1>
+
+              <p
+                style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontStyle: "italic",
+                  fontSize: "1.1rem",
+                  color: OOO_GOLD,
+                  margin: "0 0 12px 0",
+                  lineHeight: 1.4,
+                }}
+              >
+                Governance, Sovereignty &amp; Collective Voice
+              </p>
+
+              <p
+                style={{
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  fontSize: "0.95rem",
+                  color: OOO_CHARCOAL,
+                  opacity: 0.65,
+                  lineHeight: 1.7,
+                  margin: 0,
+                  maxWidth: "620px",
+                }}
+              >
+                Every OOOrgs member has a voice. Submit proposals, cast votes —
+                For, Against, or Abstain — and shape the direction of our
+                collective. Passed resolutions become binding commitments across
+                all branches of OrganicOpulence.
+              </p>
+            </div>
+          </div>
+
+          {/* Key pillars row */}
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              flexWrap: "wrap",
+              marginTop: "36px",
+            }}
+          >
+            {[
+              {
+                icon: FileText,
+                label: "Propose",
+                desc: "Any member can raise a motion",
+              },
+              {
+                icon: Users,
+                label: "Vote",
+                desc: "Collective decision-making",
+              },
+              {
+                icon: Shield,
+                label: "Enact",
+                desc: "Passed resolutions are binding",
+              },
+            ].map(({ icon: Icon, label, desc }) => (
+              <div
+                key={label}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "14px 20px",
+                  borderRadius: "12px",
+                  background: "oklch(0.97 0.02 88)",
+                  border: "1px solid oklch(0.88 0.03 88)",
+                  minWidth: "180px",
+                  flex: "1 1 180px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "9px",
+                    background: "oklch(0.38 0.12 155 / 0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: OOO_GREEN,
+                    flexShrink: 0,
+                  }}
+                >
+                  <Icon size={17} strokeWidth={1.75} />
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      color: OOO_CHARCOAL,
+                      letterSpacing: "0.02em",
+                    }}
+                  >
+                    {label}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontSize: "0.75rem",
+                      color: OOO_CHARCOAL,
+                      opacity: 0.5,
+                    }}
+                  >
+                    {desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* ProposalGrid section */}
+      <section
+        data-ocid="dao.panel"
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "40px 24px 64px",
+        }}
+      >
+        <ProposalGrid />
+      </section>
     </main>
   );
 }

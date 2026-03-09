@@ -7,8 +7,6 @@ import Text "mo:core/Text";
 import Char "mo:core/Char";
 import Time "mo:core/Time";
 
-
-
 actor {
   public type Campaign = {
     id : Nat;
@@ -91,6 +89,20 @@ actor {
     createdAt : Time.Time;
   };
 
+  type Proposal = {
+    id : Nat;
+    title : Text;
+    description : Text;
+    proposedBy : Text;
+    category : Text;
+    status : Text; // "Active" | "Passed" | "Rejected"
+    votesFor : Nat;
+    votesAgainst : Nat;
+    votesAbstain : Nat;
+    createdAt : Time.Time;
+    closingDate : Text;
+  };
+
   let campaigns = Map.empty<Nat, Campaign>();
   let donations = Map.empty<Nat, Donation>();
   let gifts = Map.empty<Nat, Gift>();
@@ -100,6 +112,7 @@ actor {
   let incomeEntries = Map.empty<Nat, IncomeEntry>();
   let expenseEntries = Map.empty<Nat, ExpenseEntry>();
   let budgetTargets = Map.empty<Text, Float>();
+  let proposals = Map.empty<Nat, Proposal>();
 
   var nextCampaignId = 1;
   var nextDonationId = 1;
@@ -107,6 +120,9 @@ actor {
   var nextVolunteerId = 1;
   var nextIncomeEntryId = 13;
   var nextExpenseEntryId = 13;
+  var nextProposalId = 7;
+
+  // Seed proposal entries in initialization
 
   public shared ({ caller }) func createCampaign(
     title : Text,
@@ -488,5 +504,76 @@ actor {
 
   public query ({ caller }) func getBudgetTargets() : async [(Text, Float)] {
     budgetTargets.toArray();
+  };
+
+  ////////////////////////////////////
+  // DAO Proposal System (NEW)
+  ////////////////////////////////////
+
+  public shared ({ caller }) func createProposal(
+    title : Text,
+    description : Text,
+    proposedBy : Text,
+    category : Text,
+    closingDate : Text,
+  ) : async Proposal {
+    let proposal : Proposal = {
+      id = nextProposalId;
+      title;
+      description;
+      proposedBy;
+      category;
+      status = "Active";
+      votesFor = 0;
+      votesAgainst = 0;
+      votesAbstain = 0;
+      createdAt = Time.now();
+      closingDate;
+    };
+
+    proposals.add(nextProposalId, proposal);
+    nextProposalId += 1;
+    proposal;
+  };
+
+  public query ({ caller }) func getAllProposals() : async [Proposal] {
+    proposals.values().toArray().sort(
+      func(a, b) { Nat.compare(b.id, a.id) }
+    );
+  };
+
+  public shared ({ caller }) func voteOnProposal(
+    proposalId : Nat,
+    vote : Text,
+  ) : async Bool {
+    switch (proposals.get(proposalId)) {
+      case (null) { false };
+      case (?proposal) {
+        var updatedProposal = proposal;
+
+        if (proposal.status != "Active") {
+          return false;
+        };
+
+        if (vote == "for") {
+          updatedProposal := { updatedProposal with votesFor = updatedProposal.votesFor + 1 };
+        } else if (vote == "against") {
+          updatedProposal := { updatedProposal with votesAgainst = updatedProposal.votesAgainst + 1 };
+        } else if (vote == "abstain") {
+          updatedProposal := { updatedProposal with votesAbstain = updatedProposal.votesAbstain + 1 };
+        };
+
+        let totalVotes = updatedProposal.votesFor + updatedProposal.votesAgainst + updatedProposal.votesAbstain;
+        if (totalVotes >= 100) {
+          let newStatus = if (updatedProposal.votesFor > updatedProposal.votesAgainst) {
+            "Passed";
+          } else { "Rejected" };
+          updatedProposal := { updatedProposal with status = newStatus };
+        };
+
+        proposals.add(proposalId, updatedProposal);
+        true;
+      };
+    };
   };
 };

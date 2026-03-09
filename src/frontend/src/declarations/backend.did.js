@@ -46,6 +46,19 @@ export const Campaign = IDL.Record({
   'contributors' : IDL.Nat,
   'amountRaised' : IDL.Float64,
 });
+export const Proposal = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : IDL.Text,
+  'title' : IDL.Text,
+  'votesAgainst' : IDL.Nat,
+  'votesFor' : IDL.Nat,
+  'createdAt' : Time,
+  'description' : IDL.Text,
+  'votesAbstain' : IDL.Nat,
+  'closingDate' : IDL.Text,
+  'category' : IDL.Text,
+  'proposedBy' : IDL.Text,
+});
 export const FractionalizationSettings = IDL.Record({
   'pricePerUnit' : IDL.Float64,
   'totalUnits' : IDL.Nat,
@@ -113,6 +126,11 @@ export const idlService = IDL.Service({
       [Campaign],
       [],
     ),
+  'createProposal' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [Proposal],
+      [],
+    ),
   'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
   'getAllExpenseEntries' : IDL.Func([], [IDL.Vec(ExpenseEntry)], ['query']),
   'getAllFractionalizationSettings' : IDL.Func(
@@ -121,6 +139,7 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getAllIncomeEntries' : IDL.Func([], [IDL.Vec(IncomeEntry)], ['query']),
+  'getAllProposals' : IDL.Func([], [IDL.Vec(Proposal)], ['query']),
   'getBudgetTargets' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
@@ -180,6 +199,7 @@ export const idlService = IDL.Service({
       [IDL.Bool],
       [],
     ),
+  'voteOnProposal' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -222,6 +242,19 @@ export const idlFactory = ({ IDL }) => {
     'fullDescription' : IDL.Text,
     'contributors' : IDL.Nat,
     'amountRaised' : IDL.Float64,
+  });
+  const Proposal = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : IDL.Text,
+    'title' : IDL.Text,
+    'votesAgainst' : IDL.Nat,
+    'votesFor' : IDL.Nat,
+    'createdAt' : Time,
+    'description' : IDL.Text,
+    'votesAbstain' : IDL.Nat,
+    'closingDate' : IDL.Text,
+    'category' : IDL.Text,
+    'proposedBy' : IDL.Text,
   });
   const FractionalizationSettings = IDL.Record({
     'pricePerUnit' : IDL.Float64,
@@ -290,6 +323,11 @@ export const idlFactory = ({ IDL }) => {
         [Campaign],
         [],
       ),
+    'createProposal' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [Proposal],
+        [],
+      ),
     'getActiveCampaigns' : IDL.Func([], [IDL.Vec(Campaign)], ['query']),
     'getAllExpenseEntries' : IDL.Func([], [IDL.Vec(ExpenseEntry)], ['query']),
     'getAllFractionalizationSettings' : IDL.Func(
@@ -298,6 +336,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getAllIncomeEntries' : IDL.Func([], [IDL.Vec(IncomeEntry)], ['query']),
+    'getAllProposals' : IDL.Func([], [IDL.Vec(Proposal)], ['query']),
     'getBudgetTargets' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
@@ -357,6 +396,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         [],
       ),
+    'voteOnProposal' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Bool], []),
   });
 };
 

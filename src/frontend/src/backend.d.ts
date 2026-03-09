@@ -71,6 +71,19 @@ export interface IncomeEntry {
     category: string;
     amount: number;
 }
+export interface Proposal {
+    id: bigint;
+    status: string;
+    title: string;
+    votesAgainst: bigint;
+    votesFor: bigint;
+    createdAt: Time;
+    description: string;
+    votesAbstain: bigint;
+    closingDate: string;
+    category: string;
+    proposedBy: string;
+}
 export interface ExpenseEntry {
     id: bigint;
     ref: string;
@@ -87,10 +100,12 @@ export interface backendInterface {
     allCampaigns(): Promise<Array<Campaign>>;
     claimUnits(campaignId: bigint, claimantName: string, units: bigint): Promise<boolean>;
     createCampaign(title: string, shortDescription: string, fullDescription: string, category: string, goalAmount: number, organizerName: string, organizerBio: string, imageUrl: string, startAt: Time, endAt: Time, tags: Array<string>): Promise<Campaign>;
+    createProposal(title: string, description: string, proposedBy: string, category: string, closingDate: string): Promise<Proposal>;
     getActiveCampaigns(): Promise<Array<Campaign>>;
     getAllExpenseEntries(): Promise<Array<ExpenseEntry>>;
     getAllFractionalizationSettings(): Promise<Array<[bigint, FractionalizationSettings]>>;
     getAllIncomeEntries(): Promise<Array<IncomeEntry>>;
+    getAllProposals(): Promise<Array<Proposal>>;
     getBudgetTargets(): Promise<Array<[string, number]>>;
     getCampaign(id: bigint): Promise<Campaign | null>;
     getCampaignsByCategory(category: string): Promise<Array<Campaign>>;
@@ -106,4 +121,5 @@ export interface backendInterface {
     registerVolunteer(campaignId: bigint, fullName: string, email: string, availability: Array<string>, skills: string): Promise<boolean>;
     setBudgetTarget(category: string, amount: number): Promise<boolean>;
     setFractionalizationSettings(campaignId: bigint, totalUnits: bigint, pricePerUnit: number): Promise<boolean>;
+    voteOnProposal(proposalId: bigint, vote: string): Promise<boolean>;
 }
